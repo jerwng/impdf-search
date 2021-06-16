@@ -4,7 +4,7 @@ import Navbar from 'react-bootstrap/Navbar';
 
 function TopNavbar() {
   return <Navbar bg="dark" variant="dark">
-    <Navbar.Brand href="#home">Image PDF Searcher</Navbar.Brand>
+    <Navbar.Brand href="#home">Images PDF Searcher</Navbar.Brand>
   </Navbar>;
 }
 
