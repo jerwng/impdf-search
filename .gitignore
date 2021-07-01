@@ -25,3 +25,7 @@ yarn-error.log*
 # files
 impdf.code-workspace
 /ocr/*/
+/src/server/pdf/
+
+# server venv
+/src/server/venv/
