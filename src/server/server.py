@@ -8,14 +8,17 @@ app = Flask(__name__)
 cors = CORS(app)
 app.config['CORS_HEADERS'] = 'Content-Type'
 
-@app.route('/test', methods=['GET'])
+@app.route('/test/', methods=['GET'])
 @cross_origin()
 def test():
     return "hello"
 
-@app.route('/pdf', methods=['POST'])
+@app.route('/pdf/', methods=['POST'])
 @cross_origin()
 def pdf():
+    print(request.files)
     if request.files:
-        uploaded_pdf = request.files['pdf']
-        uploaded_pdf.save(os.path.join("/pdf/", secure_filename(uploaded_pdf.filename)))
+        uploaded_pdf = request.files['file']
+        uploaded_pdf.save(os.path.join("./pdf/", secure_filename(uploaded_pdf.filename)))
+    
+    return "done"
