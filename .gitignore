@@ -29,3 +29,6 @@ impdf.code-workspace
 
 # server venv
 /src/server/venv/
+
+# pycache
+*.pyc
