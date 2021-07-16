@@ -6,24 +6,21 @@ import Button from "react-bootstrap/Button"
 import { uapi_post_pdf } from "./utils/api.js";
 import './css/inputs.css';
 
-function Inputs() {
+function Inputs(props) {
   return <div id="inputs-container">
-    <UploadPDF />
-    <SearchWords />
-  </div> 
-
+    <UploadPDF handleUpload={props.handleUpload}/>
+    <SearchWords handleSetSearchWords={props.handleSetSearchWords}/>
+    
+  </div>
 }
 
-function UploadPDF() {
+function UploadPDF(props) {
   const [file, setFile] = useState(undefined)
 
   const handleSubmit = (e) => {
     e.preventDefault()
     
-    const file_form_data = new FormData();
-    file_form_data.append('file', file);
-
-    uapi_post_pdf(file_form_data)
+    props.handleUpload(file)
   }
 
   const handleUploadFile = (e) => {
@@ -66,13 +63,29 @@ function UploadPDF() {
   </Form>
 }
 
-function SearchWords() {
-  return <Form>
+function SearchWords(props) {
+  const handleSubmit = (e) => {
+    e.preventDefault()
+  
+    let newSearchWord = undefined
+    /* e.target[0].value contains the search word value in the input */
+    if (e.target[0].value !== "") {
+      newSearchWord = e.target[0].value
+    }
+
+    props.handleSetSearchWords(newSearchWord)
+  }
+
+  return <Form onSubmit={handleSubmit}>
     <Form.Group id="search-words-form-group">
       <h3 className="inputs-label">Search Words</h3>
       <Form.Control id="search-words-input" placeholder="Enter Search Words" />
     </Form.Group>
-    <Button id="search-words-button" variant="success">
+    <Button 
+      id="search-words-button" 
+      variant="success"
+      type="submit"
+    >
       Search
     </Button>
   </Form>

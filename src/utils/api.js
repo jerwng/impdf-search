@@ -9,12 +9,15 @@ export function uapi_post_pdf(pdf) {
       body: pdf
     }).then((res) => {
       if (res.ok) {
-        resolve(res);
+        return res.json()
       } else {
-        throw res;
+        throw res
       }
+    }).then((res_json) => {
+      resolve(res_json)
     }).catch((err) => {
       reject(err);
     })
+    
   });
 }
