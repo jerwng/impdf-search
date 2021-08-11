@@ -1,0 +1,11 @@
+.status {
+  position:fixed;
+  bottom: 2%;
+
+  /*
+    Centers a fixed element
+    Solution provided by: https://stackoverflow.com/a/25919090
+  */
+  left: 50%;
+  transform: translate(-50%, 0);
+}
