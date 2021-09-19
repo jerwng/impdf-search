@@ -7,7 +7,7 @@ from werkzeug.utils import secure_filename
 
 from utils import pdf_to_photos, ocr, search_word_photo, delete_photo, cleanup
 
-app = Flask(__name__)
+app = Flask(__name__, static_folder='../../build', static_url_path='/')
 cors = CORS(app)
 
 app.config['CORS_HEADERS'] = 'Content-Type'
