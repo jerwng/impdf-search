@@ -3,11 +3,12 @@ import logging
 import traceback
 from flask import Flask, request, jsonify
 from flask_cors import CORS, cross_origin
+from flask.helpers import send_from_directory
 from werkzeug.utils import secure_filename
 
 from utils import pdf_to_photos, search_word_photo
 
-app = Flask(__name__, static_folder='../../build', static_url_path='/')
+app = Flask(__name__, static_folder='app/build', static_url_path='/')
 cors = CORS(app)
 
 app.config['CORS_HEADERS'] = 'Content-Type'
@@ -66,3 +67,6 @@ def search():
       logging.error(traceback.print_exc())
       return {}, 500
 
+@app.route('/')
+def serve():
+    return send_from_directory(app.static_folder, 'index.html')
