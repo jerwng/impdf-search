@@ -8,14 +8,7 @@ from base64 import encodebytes, b64encode, b64decode
 from pdf2image import convert_from_bytes
 from pytesseract import Output # import Output from Pytesseract to get image_to_data to output in dict
 
-def pdf_to_photos(o_pdir, unique_filename, pdf):
-    # Split unique filename to remove .pdf extension
-    unique_filename_spt = unique_filename.split(".")
-  
-    # makedirs creates intermediate directories, don't need to check if o_pdir is valid
-    o_dir = os.path.join(o_pdir, unique_filename_spt[0]) 
-    os.makedirs(o_dir)
-    
+def pdf_to_photos(pdf):    
     # pages = convert_from_path(i_path)
     pages = convert_from_bytes(pdf)
 

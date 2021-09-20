@@ -15,9 +15,6 @@ app.config['CORS_HEADERS'] = 'Content-Type'
 app.config['MAX_CONTENT_LENGTH'] = 25 * 1000 * 1000 # limit upload to 25 MB
 app.config['UPLOAD_EXTENSIONS'] = ['.pdf']
 
-PDF_DIR = "./pdf/"
-PHOTO_DIR = "./photos/"
-
 # Remake the photos directory on server start to clean out any left over photos
 
 @app.route('/test/', methods=['GET'])
@@ -34,9 +31,6 @@ def pdf():
         ocr_dict = {}
         
         if request.files:
-
-            if not os.path.exists(PDF_DIR):
-                os.makedirs(PDF_DIR)
         
             uploaded_pdf = request.files['file']
             sec_filename = secure_filename(uploaded_pdf.filename)
@@ -48,7 +42,7 @@ def pdf():
             if not(sec_filename.endswith(".pdf")):
               return "Invalid file type.", 400
 
-            encoded_imgs, ocr_dict = pdf_to_photos(PHOTO_DIR, unique_filename, uploaded_pdf.read())
+            encoded_imgs, ocr_dict = pdf_to_photos(uploaded_pdf.read())
 
             # gets the unique filename without .pdf extension
             unique_filename_spt = unique_filename.split(".")
