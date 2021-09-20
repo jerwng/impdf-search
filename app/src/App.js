@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import './css/App.css';
 
 import TopNavbar from "./navbar.js"
@@ -7,7 +7,7 @@ import Images from "./images.js"
 import ImageModal from "./image-modal.js"
 import Status from "./status.js"
 
-import { uapi_post_pdf, uapi_post_search, uapi_delete_disconnect, uapi_test } from "./utils/api.js";
+import { uapi_post_pdf, uapi_post_search } from "./utils/api.js";
 
 function App() {
   /*

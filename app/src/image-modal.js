@@ -33,6 +33,7 @@ function ImageModal(props) {
         <img
           className="image-modal"
           src={"data:image/jpeg;base64, ".concat(props.selectedPhoto)} // concat data:image/jpeg;base64, in front of the base64 encoded image to allow for <img> to read the encoded image
+          alt=""
         />
       </Modal.Body>
     </Modal>

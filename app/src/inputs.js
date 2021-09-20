@@ -3,7 +3,6 @@ import React, { useState, useEffect } from 'react';
 import Form from "react-bootstrap/Form"
 import Button from "react-bootstrap/Button"
 
-import { uapi_post_pdf } from "./utils/api.js";
 import './css/inputs.css';
 
 function Inputs(props) {
