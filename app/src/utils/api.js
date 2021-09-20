@@ -1,6 +1,6 @@
 export function uapi_test() {
   return new Promise(function (resolve, reject) {
-    fetch("http://localhost:5000/test/", {
+    fetch("https://impdf-searcher.herokuapp.com/test/", {
       method: "GET",
     }).then((res) => {
       if (res.ok) {
@@ -16,7 +16,7 @@ export function uapi_test() {
 
 export function uapi_post_pdf(pdf) {
   return new Promise(function (resolve, reject) {
-    fetch("http://localhost:5000/pdf/", {
+    fetch("https://impdf-searcher.herokuapp.com/pdf/", {
       method: "POST",
       body: pdf
     }).then((res) => {
@@ -36,7 +36,7 @@ export function uapi_post_pdf(pdf) {
 
 export function uapi_post_search(searchBody) {
   return new Promise(function (resolve, reject) {
-    fetch("http://localhost:5000/search/", {
+    fetch("https://impdf-searcher.herokuapp.com/search/", {
       method:"POST",
       headers: {
         'Content-Type': 'application/json'
@@ -58,7 +58,7 @@ export function uapi_post_search(searchBody) {
 
 export function uapi_delete_disconnect(searchBody) {
   return new Promise(function (resolve, reject){
-    fetch("http://localhost:5000/disconnect/", {
+    fetch("https://impdf-searcher.herokuapp.com/disconnect/", {
       method: "DELETE",
       headers: {
         'Content-Type': 'application/json'
