@@ -9,7 +9,6 @@ from pdf2image import convert_from_bytes
 from pytesseract import Output # import Output from Pytesseract to get image_to_data to output in dict
 
 def pdf_to_photos(pdf):    
-    # pages = convert_from_path(i_path)
     pages = convert_from_bytes(pdf)
 
     encoded_imgs = []
