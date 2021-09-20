@@ -45,18 +45,14 @@ function App() {
     })
   }
 
-  const handleDeleteFileServer = (deletePhotos) => {
-    if (typeof (uniqueFileName) !== "undefined") {
-      if (deletePhotos) {
-        setFileData({
-          allPhotos: [],
-          ocr: {},
-          uniqueFileName: undefined
-        })
+  const handleDeleteFileServer = () => {
+    setFileData({
+      allPhotos: [],
+      ocr: {},
+      uniqueFileName: undefined
+    })
 
-        setDisplayedPhotos([])
-      }
-    }
+    setDisplayedPhotos([])
   }
 
   const handleClickThumbnail = (id) => {

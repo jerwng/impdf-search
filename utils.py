@@ -18,7 +18,7 @@ def pdf_to_photos(pdf):
     for i, page in enumerate(pages):
         img = cv2.cvtColor(np.array(page), cv2.COLOR_RGB2BGR)
 
-        ocr_dict[i] = ocr(i, img)
+        ocr_dict[i] = ocr(img)
 
         # Encode the translated pdf images to bytes. 
         # This will be used by the API to send the images back to client.
@@ -30,7 +30,7 @@ def pdf_to_photos(pdf):
     
     return encoded_imgs, ocr_dict
 
-def ocr(i, img):
+def ocr(img):
     config = ("-l eng --oem 1 --psm 11")
 
     res_pic_dict = {}

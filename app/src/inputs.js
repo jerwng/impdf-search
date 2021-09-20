@@ -48,7 +48,7 @@ function UploadPDF(props) {
 
   const handleDeleteFile = (e) => {
     setFile(undefined)
-    props.handleDeleteFileServer(true)
+    props.handleDeleteFileServer()
   }
 
   const handleMouseEnter = (e) => {

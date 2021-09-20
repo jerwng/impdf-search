@@ -49,6 +49,7 @@ def pdf():
         return jsonify({"photos": encoded_imgs, "uniqueFileName": unique_filename_spt[0], "ocr": ocr_dict}), 200
     except Exception as e:
         logging.basicConfig(format='[%(levelname)s] %(asctime)s - %(message)s', level=logging.ERROR)
+        logging.error(e)
         logging.error(traceback.print_exc())
         return {}, 500
 
@@ -63,6 +64,7 @@ def search():
       return jsonify({"photos": encoded_photos}), 200
   except Exception as e:
       logging.basicConfig(format='[%(levelname)s] %(asctime)s - %(message)s', level=logging.ERROR)
+      logging.error(e)
       logging.error(traceback.print_exc())
       return {}, 500
 
