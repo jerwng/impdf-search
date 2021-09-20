@@ -14,8 +14,6 @@ app.config['CORS_HEADERS'] = 'Content-Type'
 app.config['MAX_CONTENT_LENGTH'] = 25 * 1000 * 1000 # limit upload to 25 MB
 app.config['UPLOAD_EXTENSIONS'] = ['.pdf']
 
-# Remake the photos directory on server start to clean out any left over photos
-
 @app.route('/test/', methods=['GET'])
 @cross_origin()
 def test():
