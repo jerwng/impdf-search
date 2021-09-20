@@ -3,23 +3,10 @@ import pytesseract
 import cv2
 import numpy as np
 import io
-import json
-import shutil
-import threading
-import time
-import logging
-
 
 from base64 import encodebytes, b64encode, b64decode
-from pdf2image import convert_from_path, convert_from_bytes
+from pdf2image import convert_from_bytes
 from pytesseract import Output # import Output from Pytesseract to get image_to_data to output in dict
-from github import Github
-
-# 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
-
-g = Github("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")
-repo = g.get_repo("jerwng/impdf-search-storage")
-# repo.create_file("test.txt", "test", "test")
 
 def pdf_to_photos(o_pdir, unique_filename, pdf):
     # Split unique filename to remove .pdf extension

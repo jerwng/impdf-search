@@ -1,6 +1,5 @@
 import os
 import uuid
-import shutil
 import logging
 import traceback
 from flask import Flask, request, jsonify
