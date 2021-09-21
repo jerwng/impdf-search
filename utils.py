@@ -35,6 +35,8 @@ def ocr(img):
 
     res_pic_dict = {}
 
+    pytesseract.pytesseract.tesseract_cmd = '/app/.apt/usr/bin/tesseract'
+
     ocr_res = pytesseract.image_to_data(img, config=config, output_type=Output.DICT)
 
     # make text search insensitive, remove np.char.lower for case sensitive
