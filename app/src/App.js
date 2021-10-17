@@ -7,8 +7,7 @@ import Images from "./images.js"
 import ImageModal from "./image-modal.js"
 import Status from "./status.js"
 
-import { uapi_post_pdf, uapi_post_search } from "./utils/api.js";
-
+import { uapi_post_pdf, uapi_post_search } from "./utils/api.js";    
 function App() {
   /*
     Sample photo used during testing

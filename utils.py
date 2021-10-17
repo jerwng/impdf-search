@@ -7,7 +7,7 @@ from base64 import encodebytes, b64encode, b64decode
 from pdf2image import convert_from_bytes
 from pytesseract import Output # import Output from Pytesseract to get image_to_data to output in dict
 
-def pdf_to_photos(pdf):    
+def pdf_to_photos(pdf):
     pages = convert_from_bytes(pdf)
 
     encoded_imgs = []
@@ -18,7 +18,7 @@ def pdf_to_photos(pdf):
     for i, page in enumerate(pages):
         img = cv2.cvtColor(np.array(page), cv2.COLOR_RGB2BGR)
 
-        # ocr_dict[i] = ocr(img)
+        ocr_dict[i] = ocr(img)
 
         # Encode the translated pdf images to bytes. 
         # This will be used by the API to send the images back to client.
@@ -35,7 +35,8 @@ def ocr(img):
 
     res_pic_dict = {}
 
-    pytesseract.pytesseract.tesseract_cmd = '/app/.apt/usr/bin/tesseract'
+    # TODO: Uncomment this in production
+    # pytesseract.pytesseract.tesseract_cmd = '/app/.apt/usr/bin/tesseract'
 
     ocr_res = pytesseract.image_to_data(img, config=config, output_type=Output.DICT)
 

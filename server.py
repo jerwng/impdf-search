@@ -5,15 +5,22 @@ from flask import Flask, request, jsonify
 from flask_cors import CORS, cross_origin
 from flask.helpers import send_from_directory
 from werkzeug.utils import secure_filename
+from rq import Queue
+from rq.job import Job
+from worker import conn
 
 from utils import pdf_to_photos, search_word_photo
 
-app = Flask(__name__, static_folder='app/build', static_url_path='/')
+# TODO: Replace with this line in production
+# app = Flask(__name__, static_folder='app/build', static_url_path='/')
+app = Flask(__name__)
 cors = CORS(app)
 
 app.config['CORS_HEADERS'] = 'Content-Type'
 app.config['MAX_CONTENT_LENGTH'] = 25 * 1000 * 1000 # limit upload to 25 MB
 app.config['UPLOAD_EXTENSIONS'] = ['.pdf']
+
+q = Queue(connection=conn)
 
 @app.route('/test/', methods=['GET'])
 @cross_origin()
@@ -24,9 +31,7 @@ def test():
 @cross_origin()
 def pdf():
     try:
-        encoded_imgs = []
-        unique_filename_spt = ""
-        ocr_dict = {}
+        job_id = None
         
         if request.files:
         
@@ -40,12 +45,15 @@ def pdf():
             if not(sec_filename.endswith(".pdf")):
               return "Invalid file type.", 400
 
-            encoded_imgs, ocr_dict = pdf_to_photos(uploaded_pdf.read())
+            from utils import pdf_to_photos
 
-            # gets the unique filename without .pdf extension
-            unique_filename_spt = unique_filename.split(".")
+            job = q.enqueue_call(
+                func=pdf_to_photos, args=(uploaded_pdf.read(),), result_ttl=5000
+            )
+
+            job_id = job.get_id()
         
-        return jsonify({"photos": encoded_imgs, "uniqueFileName": unique_filename_spt[0], "ocr": ocr_dict}), 200
+        return jsonify({"jobID": job_id}), 200
     except Exception as e:
         logging.basicConfig(format='[%(levelname)s] %(asctime)s - %(message)s', level=logging.ERROR)
         logging.error(e)
@@ -66,6 +74,15 @@ def search():
       logging.error(e)
       logging.error(traceback.print_exc())
       return {}, 500
+
+@app.route('/results/<job_id>/', methods=['GET'])
+def get_results(job_id):
+    job = Job.fetch(job_id, connection=conn)
+
+    if job.is_finished:
+        return str(job.result), 200
+    else:
+        return "Not yet finished", 202
 
 @app.route('/')
 def serve():
