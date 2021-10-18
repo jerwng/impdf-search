@@ -11,9 +11,7 @@ from worker import conn
 
 from utils import pdf_to_photos, search_word_photo
 
-# TODO: Replace with this line in production
-# app = Flask(__name__, static_folder='app/build', static_url_path='/')
-app = Flask(__name__)
+app = Flask(__name__, static_folder='app/build', static_url_path='/')
 cors = CORS(app)
 
 app.config['CORS_HEADERS'] = 'Content-Type'

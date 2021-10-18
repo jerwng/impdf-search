@@ -35,8 +35,7 @@ def ocr(img):
 
     res_pic_dict = {}
 
-    # TODO: Uncomment this in production
-    # pytesseract.pytesseract.tesseract_cmd = '/app/.apt/usr/bin/tesseract'
+    pytesseract.pytesseract.tesseract_cmd = '/app/.apt/usr/bin/tesseract'
 
     ocr_res = pytesseract.image_to_data(img, config=config, output_type=Output.DICT)
 
