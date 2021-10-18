@@ -88,8 +88,6 @@ def search_word_photo(data):
             img_encoded = np.fromstring(b64decode(data["allPhotos"][int(key)]), np.uint8)
             img = cv2.imdecode(img_encoded, cv2.IMREAD_COLOR)
 
-            img = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
-
             for search_words_i, search_words_y in enumerate(search_words_top):
                 search_words_x = search_words_left[search_words_i]
                 search_words_w = search_words_width[search_words_i]
