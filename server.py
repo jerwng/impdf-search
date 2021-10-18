@@ -48,7 +48,7 @@ def pdf():
             from utils import pdf_to_photos
 
             job = q.enqueue_call(
-                func=pdf_to_photos, args=(uploaded_pdf.read(),), result_ttl=5000
+                func=pdf_to_photos, args=(uploaded_pdf.read(),), result_ttl=30000
             )
 
             job_id = job.get_id()
@@ -80,9 +80,10 @@ def get_results(job_id):
     job = Job.fetch(job_id, connection=conn)
 
     if job.is_finished:
-        return str(job.result), 200
+        photos, ocr = job.result
+        return jsonify({"status": "Finished", "photos": photos, "ocr": ocr}), 200
     else:
-        return "Not yet finished", 202
+        return {"status": "Not yet finished", "photos": [], "ocr": {}}, 202
 
 @app.route('/')
 def serve():
