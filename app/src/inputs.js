@@ -5,21 +5,45 @@ import Button from "react-bootstrap/Button"
 
 import './css/inputs.css';
 
+/**
+ * Sub-component for: App
+ * 
+ * @param {Function} props.handleUpload Handler to submit the uploaded file to server.
+ * @param {Function} props.handleSetSearchWords Handler to submit the search words.
+ * @param {Function} props.handleDeleteFileServer Handler to delete the uploaded file.
+ * @param {Boolean} props.loading Boolean to indicate if server is processing the request.
+ * @param {Boolean} props.searchDisabled Boolean to indicate if there are photos available to search.
+ * 
+ * @returns The input component of the web app. 
+ */
 function Inputs(props) {
   const[file, setFile] = useState(undefined)
 
+  /**
+   * Handler to submit the uploaded file to server.
+   * @param {Event} e Event for the submit event.
+   */
   const handleSubmit = (e) => {
+    // prevent refresh after submit.
     e.preventDefault()
     props.handleUpload(file)
   }
 
+
+  /**
+   * Handler to submit the search words.
+   * @param {Event} e Event for the upload event.
+   */
   const handleUploadFile = (e) => {
     const uploadedFile = e.target.files[0]
     setFile(uploadedFile)
 
   }
 
-  const handleDeleteFile = (e) => {
+  /**
+   * Handler to delete the uploaded file.
+   */
+  const handleDeleteFile = () => {
     setFile(undefined)
     props.handleDeleteFileServer()
   }
@@ -34,13 +58,23 @@ function Inputs(props) {
     />
     <SearchWords 
       handleSetSearchWords={props.handleSetSearchWords}
-      file={file}
       disabled={props.searchDisabled}
     />
     
   </div>
 }
 
+/**
+ * Sub-component for: Inputs
+ * 
+ * @param {Function} props.handleUpload Handler to let user select the file to upload.
+ * @param {Function} props.handleSubmit Handler to submit the selected file.
+ * @param {Function} props.handleDeleteFile Handler to delete the uploaded file.
+ * @param {Boolean} props.loading Boolean to indicate if server is processing the request.
+ * @param {File} props.file The selected file submitted for OCR.
+ * 
+ * @returns The component to let user select PDF files to upload.
+ */
 function UploadPDF(props) {
   const handleMouseEnter = (e) => {
     e.target.style.cursor = 'pointer'
@@ -50,6 +84,7 @@ function UploadPDF(props) {
     e.target.style.cursor = ''
   }
 
+  // disable upload if no file is selected or another file is processing
   let disabled = props.file && !props.loading ? false : true
 
   return <Form onSubmit={props.handleSubmit}>
@@ -94,7 +129,18 @@ function UploadPDF(props) {
   </Form>
 }
 
+/**
+ * Sub-Component for: Inputs
+ * @param {Function} props.handleSetSearchWords Handler to submit the search words.
+ * @param {Boolean} props.disabled Boolean to indicate if there are photos available to search.
+ * 
+ * @returns The search words component to filter images with selected words.
+ */
 function SearchWords(props) {
+  /**
+   * 
+   * @param {Event} e Event for the submit event.
+   */
   const handleSubmit = (e) => {
     e.preventDefault()
   
@@ -106,8 +152,6 @@ function SearchWords(props) {
 
     props.handleSetSearchWords(newSearchWord)
   }
-
-  // let disabled = !props.file ? false : true
 
   return <Form onSubmit={handleSubmit}>
     <Form.Group id="search-words-form-group">
