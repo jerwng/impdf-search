@@ -16,6 +16,23 @@ export function uapi_test() {
   })
 }
 
+export function uapi_get_results(jobID) {
+  return new Promise((resolve, reject) => {
+    fetch(`http://localhost:5000/results/${jobID}/`, {
+      method: "GET"
+    }).then((res) => {
+      if (res.ok) {
+        resolve(res.json())
+      } else {
+        throw res;
+      }
+
+    }).catch((err) => {
+      reject(err)
+    })
+  })
+}
+
 export function uapi_post_pdf(pdf) {
   return new Promise(function (resolve, reject) {
     fetch("http://localhost:5000/pdf/", {

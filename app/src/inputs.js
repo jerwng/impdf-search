@@ -6,38 +6,11 @@ import Button from "react-bootstrap/Button"
 import './css/inputs.css';
 
 function Inputs(props) {
-  return <div id="inputs-container">
-    <UploadPDF 
-      handleUpload={props.handleUpload}
-      handleDeleteFileServer={props.handleDeleteFileServer}
-      uniqueFileName={props.uniqueFileName}
-    />
-    <SearchWords 
-      handleSetSearchWords={props.handleSetSearchWords}
-      uniqueFileName={props.uniqueFileName}
-    />
-    
-  </div>
-}
-
-function UploadPDF(props) {
-  const [file, setFile] = useState(undefined)
-  /* Want to Disable Delete and Upload buttons during loading to prevent 
-     bugs or repeated form submittion API calls */
-  const [loading, setLoading] = useState(false)
-
-  useEffect(() => {
-    /* We know form submittion API call is finished when parent's uniqueFileName 
-       is updated */
-    setLoading(false)
-  }, [props.uniqueFileName])
+  const[file, setFile] = useState(undefined)
 
   const handleSubmit = (e) => {
     e.preventDefault()
-
-    setLoading(true)
     props.handleUpload(file)
-
   }
 
   const handleUploadFile = (e) => {
@@ -51,6 +24,24 @@ function UploadPDF(props) {
     props.handleDeleteFileServer()
   }
 
+  return <div id="inputs-container">
+    <UploadPDF 
+      handleUpload={handleUploadFile}
+      handleSubmit={handleSubmit}
+      handleDeleteFile={handleDeleteFile}
+      loading={props.loading}
+      file={file}
+    />
+    <SearchWords 
+      handleSetSearchWords={props.handleSetSearchWords}
+      file={file}
+      disabled={props.searchDisabled}
+    />
+    
+  </div>
+}
+
+function UploadPDF(props) {
   const handleMouseEnter = (e) => {
     e.target.style.cursor = 'pointer'
   }
@@ -59,15 +50,15 @@ function UploadPDF(props) {
     e.target.style.cursor = ''
   }
 
-  let disabled = file && !loading ? false : true
+  let disabled = props.file && !props.loading ? false : true
 
-  return <Form onSubmit={handleSubmit}>
+  return <Form onSubmit={props.handleSubmit}>
     <Form.Group id="upload-pdf-file-form-group">
       <h3 className="inputs-label">Upload PDF File</h3>
       <Form.File 
         id="upload-pdf-file" 
-        label={file ? file.name : "No File Selected"}
-        onChange={handleUploadFile} 
+        label={props.file ? props.file.name : "No File Selected"}
+        onChange={props.handleUpload} 
         onMouseEnter={handleMouseEnter}
         onMouseLeave={handleMouseLeave}
         accept=".pdf" custom      
@@ -77,7 +68,7 @@ function UploadPDF(props) {
 
         Solution provided by: https://stackoverflow.com/a/55495449
         */
-        key={file}
+        key={props.file}
       />
     </Form.Group>
     <div id="upload-pdf-file-button-container">
@@ -85,7 +76,7 @@ function UploadPDF(props) {
         id="upload-pdf-file-delete-button"
         className="upload-pdf-file-button"
         variant="danger"
-        onClick={handleDeleteFile}
+        onClick={props.handleDeleteFile}
         disabled={disabled}
       >
         Delete
@@ -116,18 +107,18 @@ function SearchWords(props) {
     props.handleSetSearchWords(newSearchWord)
   }
 
-  let disabled = props.uniqueFileName ? false : true
+  // let disabled = !props.file ? false : true
 
   return <Form onSubmit={handleSubmit}>
     <Form.Group id="search-words-form-group">
       <h3 className="inputs-label">Search Words</h3>
-      <Form.Control id="search-words-input" placeholder="Enter Search Words" disabled={disabled}/>
+      <Form.Control id="search-words-input" placeholder="Enter Search Words" disabled={props.disabled}/>
     </Form.Group>
     <Button 
       id="search-words-button" 
       variant="success"
       type="submit"
-      disabled={disabled}
+      disabled={props.disabled}
     >
       Search
     </Button>

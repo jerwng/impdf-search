@@ -7,7 +7,8 @@ import Images from "./images.js"
 import ImageModal from "./image-modal.js"
 import Status from "./status.js"
 
-import { uapi_post_pdf, uapi_post_search } from "./utils/api.js";    
+import { uapi_post_pdf, uapi_post_search, uapi_get_results } from "./utils/api.js";
+
 function App() {
   /*
     Sample photo used during testing
@@ -16,14 +17,16 @@ function App() {
 
   const [fileData, setFileData] = useState({
     allPhotos: [],
-    ocr: {},
-    uniqueFileName: undefined
+    ocr: {}
   })
 
   const [displayedPhotos, setDisplayedPhotos] = useState([])
   const [selectedPhotoID, setselectedPhotoID] = useState(undefined)
   const [spinnerShow, setSpinnerShow] = useState(false)
   const [statusMessage, setStatusMessage] = useState(undefined)
+
+  let pollingIntervalCount = 0
+  let pollingInterval
 
   const handleUpload = (file) => {
     const file_form_data = new FormData();
@@ -32,23 +35,42 @@ function App() {
     setSpinnerShow(true)
 
     uapi_post_pdf(file_form_data).then((res) => {
-      setFileData({
-        allPhotos: res.photos,
-        ocr: res.ocr,
-        uniqueFileName: res.uniqueFileName
-      })
+      pollingIntervalCount = 0
+      pollingInterval = setInterval(() => pollingTimer(res.jobID), 10000)
+    })
 
-      setDisplayedPhotos(res.photos)
-      setSpinnerShow(false)
-      setStatusMessage(undefined)
+  }
+
+  const pollingTimer = (jobID) => {
+    uapi_get_results(jobID).then((res) => {
+      if (res.status === "Finished") {
+        clearInterval(pollingInterval)
+        setFileData({
+          allPhotos: res.photos,
+          ocr: res.ocr
+        })
+
+        setDisplayedPhotos(res.photos)
+        setSpinnerShow(false)
+        setStatusMessage(undefined)
+      }
+
+      pollingIntervalCount += 1
+
+      // Stop polling if background job is not done in 5 mins
+      if (pollingIntervalCount > 30) {
+        clearInterval(pollingInterval)
+        setSpinnerShow(false)
+        setStatusMessage("Timeout")
+        pollingIntervalCount = 0
+      }
     })
   }
 
   const handleDeleteFileServer = () => {
     setFileData({
       allPhotos: [],
-      ocr: {},
-      uniqueFileName: undefined
+      ocr: {}
     })
 
     setDisplayedPhotos([])
@@ -81,7 +103,8 @@ function App() {
         handleUpload={handleUpload}
         handleSetSearchWords={handleSetSearchWords}
         handleDeleteFileServer={handleDeleteFileServer}
-        uniqueFileName={fileData.uniqueFileName}
+        loading={spinnerShow}
+        searchDisabled={fileData.allPhotos.length === 0}
       />
       <Images 
         photos={displayedPhotos}
