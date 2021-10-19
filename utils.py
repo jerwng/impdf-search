@@ -1,40 +1,53 @@
 import pytesseract
 import cv2
 import numpy as np
-import io
+import boto3
 
-from base64 import encodebytes, b64encode, b64decode
 from pdf2image import convert_from_bytes
 from pytesseract import Output # import Output from Pytesseract to get image_to_data to output in dict
+from dotenv import load_dotenv
+from botocore.client import Config
 
-def pdf_to_photos(pdf):
+def pdf_to_photos(pdf, id):
+    load_dotenv()
+    s3 = boto3.client('s3', config=Config(signature_version='s3v4'))
+
     pages = convert_from_bytes(pdf)
-
-    encoded_imgs = []
 
     # Enumerate to record page number
     # Used to uniquely identity converted photos
+    photos_url = []
     ocr_dict = {}
     for i, page in enumerate(pages):
         img = cv2.cvtColor(np.array(page), cv2.COLOR_RGB2BGR)
 
-        ocr_dict[i] = ocr(img)
+        # Encode the image and upload the file to AWS S3 storage.
+        # Solution provided from https://stackoverflow.com/a/35804056
+        img_str = cv2.imencode(".jpg", img)[1].tostring()
+        s3.put_object(Bucket="impdf-searcher", Key = "{}/{}.jpg".format(id, i), Body=img_str, ContentType='image/jpeg')
+        # Generate the URL to allow temporary public access to the file on S3
+        url = s3.generate_presigned_url(
+            ClientMethod='get_object',
+            Params={
+                'Bucket': 'impdf-searcher',
+                'Key': "{}/{}.jpg".format(id, i)
+            },
+            ExpiresIn=3600
+        )
 
-        # Encode the translated pdf images to bytes. 
-        # This will be used by the API to send the images back to client.
-        # Solution provided from https://stackoverflow.com/a/64067673
-        byte_arr = io.BytesIO()
-        page.save(byte_arr, format='JPEG') # convert the PIL image to byte array
-        encoded_img = encodebytes(byte_arr.getvalue()).decode('ascii')
-        encoded_imgs.append(encoded_img)
+        ocr_dict[i] = ocr(img)
     
-    return encoded_imgs, ocr_dict
+
+        photos_url.append(url)
+    
+    return photos_url, ocr_dict, id
 
 def ocr(img):
     config = ("-l eng --oem 1 --psm 11")
 
     res_pic_dict = {}
 
+    #TODO: Uncomment in production
     pytesseract.pytesseract.tesseract_cmd = '/app/.apt/usr/bin/tesseract'
 
     ocr_res = pytesseract.image_to_data(img, config=config, output_type=Output.DICT)
@@ -63,8 +76,16 @@ def ocr(img):
     return res_pic_dict
 
 def search_word_photo(data):
+    load_dotenv()
+    s3 = boto3.client('s3', config=Config(signature_version='s3v4'))
+
     encoded_search_word_photos = []
+
+    id = data["id"]
     search_words = np.array(data["searchWord"])
+
+    # Delete previous searched images for the given file ID
+    delete_folder("{}/search/".format(id))
 
     for key, value in data["ocr"].items():
         photo_words = np.array(value["words"])
@@ -81,11 +102,10 @@ def search_word_photo(data):
             search_words_width = photo_words_width[words_index]
             search_words_height = photo_words_height[words_index]
 
-            # Decode the given encoded image from client 
-            # for cv2 to read and highlight search words
-            # Decode solution provided from: https://stackoverflow.com/a/54205640
-            img_encoded = np.fromstring(b64decode(data["allPhotos"][int(key)]), np.uint8)
-            img = cv2.imdecode(img_encoded, cv2.IMREAD_COLOR)
+            img = s3.get_object(Bucket='impdf-searcher', Key="{}/{}.jpg".format(id, key))
+            img = img['Body'].read()
+    
+            img = cv2.imdecode(np.asarray(bytearray(img)), cv2.IMREAD_COLOR)
 
             for search_words_i, search_words_y in enumerate(search_words_top):
                 search_words_x = search_words_left[search_words_i]
@@ -96,13 +116,19 @@ def search_word_photo(data):
 
                 cv2.rectangle(img, (search_words_x - pad, search_words_y - pad), (search_words_w + search_words_x + pad, search_words_h + search_words_y + pad), (0, 0, 255), 3)
             
-            encoded_img = b64encode(cv2.imencode(".JPEG", img)[1]).decode('ascii')
+            img_str = cv2.imencode(".jpg", img)[1].tostring()
+            s3.put_object(Bucket="impdf-searcher", Key = "{}/{}/{}.jpg".format(id, "search", key), Body=img_str, ContentType='image/jpeg')
 
-            encoded_search_word_photos.append(encoded_img)
+            url = s3.generate_presigned_url(
+                ClientMethod='get_object',
+                Params={
+                    'Bucket': 'impdf-searcher',
+                    'Key': "{}/{}/{}.jpg".format(id, "search", key)
+                },
+                ExpiresIn=3600
+            )
 
-        # Return all photos if no search words given (len = 0)
-        elif (len(search_words) == 0):
-            encoded_search_word_photos = data["allPhotos"]
+            encoded_search_word_photos.append(url)
 
     return encoded_search_word_photos
 
@@ -118,5 +144,17 @@ def compare_words(search_words, photo_words):
         search_words_indexes = np.append(search_words_indexes, search_word_indexes)
     
     return search_words_indexes
+
+def delete_folder(prefix_key):
+    # Deleting objects with given prefix in the key
+    # Solution provided by: https://stackoverflow.com/a/53836093
+    s3 = boto3.resource("s3")
+    bucket = s3.Bucket("impdf-searcher")
+    bucket.objects.filter(Prefix=prefix_key).delete()
                 
-                
+
+    # Note: Objects are automatically deleted after 1 day as a result of
+    # the 'Delete after 1 minute' Lifecycle Rule set in S3.
+    # Therefore, no manual clean-up of old files is necessary.
+    # Solution provided by: https://stackoverflow.com/a/57609606 AND
+    # https://youtu.be/GIFbmf_Rpvs AND https://youtu.be/sCksXOIaYAw
