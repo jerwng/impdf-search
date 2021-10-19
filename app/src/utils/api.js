@@ -1,8 +1,10 @@
 // TODO: Change API URL in production
 
+const url = "https://impdf-searcher.herokuapp.com"
+
 export function uapi_test() {
   return new Promise(function (resolve, reject) {
-    fetch("https://impdf-searcher.herokuapp.com/test/", {
+    fetch(`${url}/test/`, {
       method: "GET",
     }).then((res) => {
       if (res.ok) {
@@ -18,7 +20,7 @@ export function uapi_test() {
 
 export function uapi_get_results(jobID) {
   return new Promise((resolve, reject) => {
-    fetch(`https://impdf-searcher.herokuapp.com/results/${jobID}/`, {
+    fetch(`${url}/results/${jobID}/`, {
       method: "GET"
     }).then((res) => {
       if (res.ok) {
@@ -35,7 +37,7 @@ export function uapi_get_results(jobID) {
 
 export function uapi_post_pdf(pdf) {
   return new Promise(function (resolve, reject) {
-    fetch("https://impdf-searcher.herokuapp.com/pdf/", {
+    fetch(`${url}/pdf/`, {
       method: "POST",
       body: pdf
     }).then((res) => {
@@ -55,7 +57,7 @@ export function uapi_post_pdf(pdf) {
 
 export function uapi_post_search(searchBody) {
   return new Promise(function (resolve, reject) {
-    fetch("https://impdf-searcher.herokuapp.com/search/", {
+    fetch(`${url}/search/`, {
       method:"POST",
       headers: {
         'Content-Type': 'application/json'
@@ -75,9 +77,9 @@ export function uapi_post_search(searchBody) {
   })
 }
 
-export function uapi_delete_disconnect(searchBody) {
+export function uapi_delete(searchBody) {
   return new Promise(function (resolve, reject){
-    fetch("https://impdf-searcher.herokuapp.com/disconnect/", {
+    fetch(`${url}/delete/`, {
       method: "DELETE",
       headers: {
         'Content-Type': 'application/json'

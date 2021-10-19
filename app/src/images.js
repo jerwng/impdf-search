@@ -56,7 +56,7 @@ function Thumbnail(props) {
   return (
     <img
       className="image-thumbnail"
-      src={"data:image/jpeg;base64, ".concat(props.photo)} // concat data:image/jpeg;base64, in front of the base64 encoded image to allow for <img> to read the encoded image
+      src={props.photo}
       alt=""
       onClick={handleClick}
       onMouseEnter={handleMouseEnter}

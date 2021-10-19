@@ -7,7 +7,7 @@ import Images from "./images.js"
 import ImageModal from "./image-modal.js"
 import Status from "./status.js"
 
-import { uapi_post_pdf, uapi_post_search, uapi_get_results } from "./utils/api.js";
+import { uapi_post_pdf, uapi_post_search, uapi_get_results, uapi_delete } from "./utils/api.js";
 
 /**
  * Main parent component for the web app. Parent component for the Navbar, Input and Image sub-components.
@@ -19,7 +19,8 @@ function App() {
   const [fileData, setFileData] = useState({
     // allPhoto: photo for each page of the PDF
     allPhotos: [],
-    ocr: {}
+    ocr: {},
+    fileID: undefined
   })
 
   // displayedPhotos: photos filtered by the search bar.
@@ -43,6 +44,17 @@ function App() {
 
     setSpinnerShow(true)
 
+    /**
+     * Delete previous uploaded file data from server
+     */
+    if (typeof(fileData.fileID) !== "undefined") {
+      const searchBody = {
+        fileID: fileData.fileID
+      }
+
+      uapi_delete(searchBody)
+    }
+ 
     uapi_post_pdf(file_form_data).then((res) => {
       /* 
       Server responds with a jobID once the file is submitted for OCR in the background.
@@ -69,7 +81,8 @@ function App() {
         clearInterval(pollingInterval)
         setFileData({
           allPhotos: res.photos,
-          ocr: res.ocr
+          ocr: res.ocr,
+          fileID: res.id
         })
 
         setDisplayedPhotos(res.photos)
@@ -93,9 +106,17 @@ function App() {
    * Handler to delete the uploaded file.
    */
   const handleDeleteFileServer = () => {
+    if (typeof (fileData.fileID) !== "undefined") {
+      const searchBody = {
+        fileID: fileData.fileID
+      }
+      uapi_delete(searchBody)
+    }
+
     setFileData({
       allPhotos: [],
-      ocr: {}
+      ocr: {},
+      fileID: undefined
     })
 
     setDisplayedPhotos([])
@@ -116,18 +137,25 @@ function App() {
    */
   const handleSetSearchWords = (newSearchWord) => {
     const newSearchWordArr = typeof(newSearchWord) !== "undefined" ? newSearchWord.split(' ') : []
-    const searchBody = {
-      allPhotos: fileData.allPhotos,
-      ocr: fileData.ocr,
-      searchWord: newSearchWordArr
+
+    if (newSearchWordArr.length === 0) {
+      setDisplayedPhotos(fileData.allPhotos)
+    } else {
+      const searchBody = {
+        allPhotos: fileData.allPhotos,
+        ocr: fileData.ocr,
+        searchWord: newSearchWordArr,
+        id: fileData.fileID
+      }
+    
+      uapi_post_search(searchBody).then((res) => {
+        setDisplayedPhotos(res.photos)
+      }).catch(async (err) => {
+        const err_json = await err.json()
+        setStatusMessage(err_json.message)
+      })
     }
-  
-    uapi_post_search(searchBody).then((res) => {
-      setDisplayedPhotos(res.photos)
-    }).catch(async (err) => {
-      const err_json = await err.json()
-      setStatusMessage(err_json.message)
-    })
+
   }
 
   return (
