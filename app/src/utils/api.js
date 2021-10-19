@@ -1,6 +1,10 @@
+// TODO: Change API URL in production
+
+const url = "https://impdf-searcher.herokuapp.com"
+
 export function uapi_test() {
   return new Promise(function (resolve, reject) {
-    fetch("http://localhost:5000/test/", {
+    fetch(`${url}/test/`, {
       method: "GET",
     }).then((res) => {
       if (res.ok) {
@@ -14,9 +18,26 @@ export function uapi_test() {
   })
 }
 
+export function uapi_get_results(jobID) {
+  return new Promise((resolve, reject) => {
+    fetch(`${url}/results/${jobID}/`, {
+      method: "GET"
+    }).then((res) => {
+      if (res.ok) {
+        resolve(res.json())
+      } else {
+        throw res;
+      }
+
+    }).catch((err) => {
+      reject(err)
+    })
+  })
+}
+
 export function uapi_post_pdf(pdf) {
   return new Promise(function (resolve, reject) {
-    fetch("http://localhost:5000/pdf/", {
+    fetch(`${url}/pdf/`, {
       method: "POST",
       body: pdf
     }).then((res) => {
@@ -36,7 +57,7 @@ export function uapi_post_pdf(pdf) {
 
 export function uapi_post_search(searchBody) {
   return new Promise(function (resolve, reject) {
-    fetch("http://localhost:5000/search/", {
+    fetch(`${url}/search/`, {
       method:"POST",
       headers: {
         'Content-Type': 'application/json'
@@ -56,9 +77,9 @@ export function uapi_post_search(searchBody) {
   })
 }
 
-export function uapi_delete_disconnect(searchBody) {
+export function uapi_delete(searchBody) {
   return new Promise(function (resolve, reject){
-    fetch("http://localhost:5000/disconnect/", {
+    fetch(`${url}/delete/`, {
       method: "DELETE",
       headers: {
         'Content-Type': 'application/json'

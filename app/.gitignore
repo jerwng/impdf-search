@@ -8,9 +8,8 @@
 # testing
 /coverage
 
-# production
+# # production
 # /build
-
 
 # misc
 .DS_Store
@@ -18,22 +17,7 @@
 .env.development.local
 .env.test.local
 .env.production.local
-dump.rdb
-.env
 
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
-
-# files
-impdf.code-workspace
-/ocr/*/
-/src/server/pdf/
-/src/server/photos/
-/venv/
-
-# server venv
-/src/server/venv/
-
-# pycache
-*.pyc

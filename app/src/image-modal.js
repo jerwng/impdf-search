@@ -4,6 +4,17 @@ import Modal from 'react-bootstrap/Modal'
 
 import './css/images.css';
 
+/**
+ * The image modal component to display the enlarged selected image.
+ * 
+ * Sub-component for: App
+ * 
+ * @param {String} props.selectedPhoto: The selected photo passed to the modal to be displayed. data:image/jpeg;base64 format.
+ * @param {Number} props.selectedPhotoID: The index of the selected photo.
+ * @param {Function} props.setSelectedPhotoID: Function to set the index of the selected photo.
+ * 
+ * @returns The image modal component to display the enlarged selected image.
+ */
 function ImageModal(props) {
   const [show, setShow] = useState(false)
 
@@ -13,6 +24,9 @@ function ImageModal(props) {
     }
   }, [props.selectedPhotoID])
 
+  /**
+   * Handler for when the modal is closed.
+   */
   const handleClose = () => {
     setShow(false)
     /*
@@ -32,7 +46,8 @@ function ImageModal(props) {
       <Modal.Body>    
         <img
           className="image-modal"
-          src={"data:image/jpeg;base64, ".concat(props.selectedPhoto)} // concat data:image/jpeg;base64, in front of the base64 encoded image to allow for <img> to read the encoded image
+          src={props.selectedPhoto}
+          alt="enlarged"
         />
       </Modal.Body>
     </Modal>
