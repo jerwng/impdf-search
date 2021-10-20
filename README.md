@@ -1,70 +1,61 @@
-# Getting Started with Create React App
+#impdf-searcher
+[Heroku Link](http://impdf-searcher.herokuapp.com)
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+## Purpose
+Detect and search text on PDF files with images.
 
-## Available Scripts
+#### Issue
+PDF viewers have built-in search text function. However, they are designed to search text directly in the document and fail if the text is embedded within an image. 
 
-In the project directory, you can run:
+#### Solution
+This project performs optical character recognition (OCR) on the PDF file. This allows text to be detected even if it is within an image.
 
-### `npm start`
+## Implementation
+#### Front End
+The front end is built using React.
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in the browser.
+* The images are displayed directly from Amazon S3 using presigned URLs returned by the server.
 
-The page will reload if you make edits.\
-You will also see any lint errors in the console.
+#### Server
+The server is built using Flask.
 
-### `npm test`
+##### PDF Processing
+* Each page in the received PDF is converted to a JPEG image using [pdf2image](https://pypi.org/project/pdf2image/).
+* OCR is done on each image using [pytesseract](https://pypi.org/project/pytesseract/).
+* Returned to client:
+    * A list of presigned image URLs for the converted PDF pages.
+    * A JSON object containing the results from OCR.
+    ```
+    {
+      pageNumber:
+        {
+          words: [],    // List of words found on the page
+          top: [],      // List of y-coordnates for each word  on the page
+          left: [],     // List of x-coordinates for each word on the page
+          width: [],    // List of width for each word on the page
+          height: []    // List of height for each word on the page
+        }
+    }
+    ```
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+##### Word Search
+* The entered search words are compared with the words array for each page.
+* Images are processed to have red highlight around matched words.
+* Presigned URLs for the highlighted imagess are returned to the client.
 
-### `npm run build`
+#### Storage
+The processed image files are stored using Amazon S3.
 
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
+## Notes
+This project is hosted with on the free tier of Heroku. As a result, computation resources are limited and large PDF files will result in long wait times.
 
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
+***Please limit PDF file size to under 1MB.***
+<sub><sup>There is a ~25MB hard limit cap enforced by the server.</sup></sub>
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
-
-### `npm run eject`
-
-**Note: this is a one-way operation. Once you `eject`, you can’t go back!**
-
-If you aren’t satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
-
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you’re on your own.
-
-You don’t have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn’t feel obligated to use this feature. However we understand that this tool wouldn’t be useful if you couldn’t customize it when you are ready for it.
-
-## Learn More
-
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
-
-To learn React, check out the [React documentation](https://reactjs.org/).
-
-### Code Splitting
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/code-splitting](https://facebook.github.io/create-react-app/docs/code-splitting)
-
-### Analyzing the Bundle Size
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size](https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size)
-
-### Making a Progressive Web App
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app](https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app)
-
-### Advanced Configuration
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/advanced-configuration](https://facebook.github.io/create-react-app/docs/advanced-configuration)
-
-### Deployment
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/deployment](https://facebook.github.io/create-react-app/docs/deployment)
-
-### `npm run build` fails to minify
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify](https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify)
+## Next Steps
+* Add documentation to server code.
+* Implement web sockets to replace polling for better efficiency when waiting for background job ([PDF Processing](#pdf-processing)) to complete.
+  
+* Display more informative status messages during [PDF Processing](#pdf-processing) and [Word Search](#word-search).
+  
+* Consolidate / re-organize states in React for greater efficiency.
