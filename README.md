@@ -60,3 +60,5 @@ This project is hosted with on the free tier of Heroku. As a result, computation
 * Display more informative status messages during [PDF Processing](#pdf-processing) and [Word Search](#word-search).
   
 * Consolidate / re-organize states in React for greater efficiency.
+
+* Explore different Tesseract settings to see if OCR accuracy improves. 
