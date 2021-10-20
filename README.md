@@ -1,5 +1,6 @@
 # impdf-searcher
-[Heroku Link](http://impdf-searcher.herokuapp.com)
+[Project Link](http://impdf-searcher.herokuapp.com) <br/> <br/>
+<sup>See [Notes](#notes) regarding potential long load times.</sup>
 
 ## Purpose
 Detect and search text on PDF files with images.
@@ -11,15 +12,15 @@ PDF viewers have built-in search text function. However, they are designed to se
 This project performs optical character recognition (OCR) on the PDF file. This allows text to be detected even if it is within an image.
 
 ## Implementation
-#### Front End
+### Front End
 The front end is built using React.
 
 * The images are displayed directly from Amazon S3 using presigned URLs returned by the server.
 
-#### Server
+### Server
 The server is built using Flask.
 
-##### PDF Processing
+#### PDF Processing
 * Each page in the received PDF is converted to a JPEG image using [pdf2image](https://pypi.org/project/pdf2image/).
 * OCR is done on each image using [pytesseract](https://pypi.org/project/pytesseract/).
 * Returned to client:
@@ -38,7 +39,7 @@ The server is built using Flask.
     }
     ```
 
-##### Word Search
+#### Word Search
 * The entered search words are compared with the words array for each page.
 * Images are processed to have red highlight around matched words.
 * Presigned URLs for the highlighted imagess are returned to the client.
