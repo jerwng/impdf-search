@@ -1,6 +1,6 @@
 # impdf-searcher
 [Project Link](http://impdf-searcher.herokuapp.com) <br/> <br/>
-<sup>See [Notes](#notes) regarding potential long load times.</sup>
+***See [Notes](#notes) regarding potential long load times.***
 
 ## Purpose
 Detect and search text on PDF files with images.
