@@ -46,7 +46,7 @@ The server is built using Flask.
 #### Word Search
 * The entered search words are compared with the words array for each page.
 * Images are processed to have red highlight around matched words.
-* Presigned URLs for the highlighted imagess are returned to the client.
+* Presigned URLs for the highlighted images are returned to the client.
 
 #### Storage
 The processed image files are stored using Amazon S3.
