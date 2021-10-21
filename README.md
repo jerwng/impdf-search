@@ -1,6 +1,10 @@
 # impdf-searcher
-[Project Link](http://impdf-searcher.herokuapp.com) <br/> <br/>
-***See [Notes](#notes) regarding potential long load times.***
+[Project Link](http://impdf-searcher.herokuapp.com)
+#### Notes
+This project is hosted with on the free tier of Heroku. As a result, computation resources are limited and large PDF files will result in long wait times.<br/>
+
+***Please limit PDF file size to under 1MB.*** <br />
+<sup>There is a ~25MB hard limit cap enforced by the server.</sup>
 
 ## Purpose
 Detect and search text on PDF files with images.
@@ -46,12 +50,6 @@ The server is built using Flask.
 
 #### Storage
 The processed image files are stored using Amazon S3.
-
-## Notes
-This project is hosted with on the free tier of Heroku. As a result, computation resources are limited and large PDF files will result in long wait times.
-
-***Please limit PDF file size to under 1MB.*** <br />
-<sup>There is a ~25MB hard limit cap enforced by the server.</sup>
 
 ## Next Steps
 * Add documentation to server code.
