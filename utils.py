@@ -8,6 +8,21 @@ from pytesseract import Output # import Output from Pytesseract to get image_to_
 from dotenv import load_dotenv
 from botocore.client import Config
 
+'''
+For each PDF page, converts, saves to JPEG and performs OCR.
+
+Params:
+pdf: PDF file received by the server
+id (str): Generated unique file name for the given PDF.
+
+Returns (Tuple): 
+(
+    photos_url (List of str): URL to each page's converted JPEG stored on AWS S3
+    ocr_dict (Dict): OCR result for the PDF file
+    id (str): Generated unique file name for the given PDF
+              (Returned, since the data is returned to a different API.)
+)
+'''
 def pdf_to_photos(pdf, id):
     load_dotenv()
     s3 = boto3.client('s3', config=Config(signature_version='s3v4'))
@@ -42,13 +57,28 @@ def pdf_to_photos(pdf, id):
     
     return photos_url, ocr_dict, id
 
+'''
+Performs OCR for the given image.
+
+Params:
+img (str): toString() of the encoded image by cv2.imencode
+
+Returns (Dict):
+{
+    "words" (List of str):  List of words found on the image.
+    "top" (List of str): The top position for each word found on the image.
+    "left" (List of str): The left position for each word found on the image.
+    "width" (List of str): The width of each word found on the image.
+    "height" (List of str): The height of each word found on the image.
+}
+'''
 def ocr(img):
     config = ("-l eng --oem 1 --psm 11")
 
     res_pic_dict = {}
 
-    #TODO: Uncomment in production
-    pytesseract.pytesseract.tesseract_cmd = '/app/.apt/usr/bin/tesseract'
+    # NOTE: Changing tesseract path is necessary to host server on Heroku.
+    # pytesseract.pytesseract.tesseract_cmd = '/app/.apt/usr/bin/tesseract'
 
     ocr_res = pytesseract.image_to_data(img, config=config, output_type=Output.DICT)
 
@@ -75,11 +105,26 @@ def ocr(img):
 
     return res_pic_dict
 
+'''
+Find the given file's JPEGs for any of the given search words.
+Generates highlighted JPEGs for all the search words occurences. 
+
+Params:
+data (Dict):
+{
+    id (str): The file ID for the PDF file
+    searchWord (str): The words to be searched on the PDF file
+    ocr (Dict): The OCR data for the PDF file
+}
+
+Returns (List of str):
+A list of URLs for the highlighted JPEGs stored on AWS S3
+'''
 def search_word_photo(data):
     load_dotenv()
     s3 = boto3.client('s3', config=Config(signature_version='s3v4'))
 
-    encoded_search_word_photos = []
+    search_word_photo_urls = []
 
     id = data["id"]
     search_words = np.array(data["searchWord"])
@@ -128,14 +173,23 @@ def search_word_photo(data):
                 ExpiresIn=3600
             )
 
-            encoded_search_word_photos.append(url)
+            search_word_photo_urls.append(url)
 
-    return encoded_search_word_photos
+    return search_word_photo_urls
 
+
+'''
+Check each search word to see if it is a substring for any entries in photo_words
+
+Params:
+    search_words (List of str): Words to see if are in any of the images
+    photo_words (List of str): The words detected on the image by OCR 
+
+Returns (Numpy Array of int32):
+    The indices (page number) where the search words are a substring of words 
+    found on the index image.
+'''
 def compare_words(search_words, photo_words):
-    '''
-    Check each search word to see if it is a substring for any entries in photo_words
-    '''
     search_words_indexes = np.array([], dtype="int32")
     for search_word in search_words:
         # For the given search word, check if search word is a substring of an entry in photo_words
@@ -145,6 +199,12 @@ def compare_words(search_words, photo_words):
     
     return search_words_indexes
 
+'''
+Deletes the images with the given prefix key (folder) on AWS S3
+
+Params:
+    prefix_key (str): The prefix key (folder) of the images to be deleted.
+'''
 def delete_folder(prefix_key):
     # Deleting objects with given prefix in the key
     # Solution provided by: https://stackoverflow.com/a/53836093

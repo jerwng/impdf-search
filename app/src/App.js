@@ -142,7 +142,6 @@ function App() {
       setDisplayedPhotos(fileData.allPhotos)
     } else {
       const searchBody = {
-        allPhotos: fileData.allPhotos,
         ocr: fileData.ocr,
         searchWord: newSearchWordArr,
         id: fileData.fileID
