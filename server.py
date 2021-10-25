@@ -1,8 +1,6 @@
 import uuid
 import logging
 import traceback
-import shutil
-import os
 from flask import Flask, request, jsonify
 from flask_cors import CORS, cross_origin
 from flask.helpers import send_from_directory
@@ -20,21 +18,34 @@ app.config['CORS_HEADERS'] = 'Content-Type'
 app.config['MAX_CONTENT_LENGTH'] = 25 * 1000 * 1000 # limit upload to 25 MB
 app.config['UPLOAD_EXTENSIONS'] = ['.pdf']
 
+# Create a queue for background jobs
 q = Queue(connection=conn)
 
-PHOTO_DIR = "./photos/"
-
-if os.path.exists(PHOTO_DIR):
-    shutil.rmtree(PHOTO_DIR)
-
-os.makedirs(PHOTO_DIR)
-
-
+'''
+Test API
+'''
 @app.route('/test/', methods=['GET'])
 @cross_origin()
 def test():
     return "hello"
 
+'''
+POST /pdf/
+
+Receives the PDF file, starts a background job that 
+for each PDF page, converts, saves to JPEG and performs OCR.
+
+Request Body:
+{
+    file: PDF file
+}
+
+Returns (JSON): 
+{
+    jobID (str): The ID of the background job
+    fileID (str): The unique filename for the given PDF
+}
+'''
 @app.route('/pdf/', methods=['POST'])
 @cross_origin()
 def pdf():
@@ -55,6 +66,7 @@ def pdf():
             if not(sec_filename.endswith(".pdf")):
               return jsonify({"status": "Invalid file type."}), 400
 
+            # rq bug, so import utils func here
             from utils import pdf_to_photos
 
             job = q.enqueue_call(
@@ -70,21 +82,64 @@ def pdf():
         logging.error(traceback.print_exc())
         return {}, 500
 
+'''
+POST /search/
+
+Searches the images for the given file ID to see if any of the pages
+contain any of the given words.
+
+Request Body:
+{
+    id (str): The file ID for the PDF file
+    searchWord (str): The words to be searched on the PDF file
+    ocr (Dict): The OCR data for the PDF file
+}
+
+Returns (JSON):
+{
+    photos (List of str): The URLs of the highlighted JPEG stored in AWS S3
+                  for pages with the searchWord.
+}
+'''
 @app.route('/search/', methods=['POST'])
 @cross_origin()
 def search():
     try:
         data = request.json
 
-        encoded_photos =  search_word_photo(data)
+        photos_url =  search_word_photo(data)
 
-        return jsonify({"photos": encoded_photos}), 200
+        return jsonify({"photos": photos_url}), 200
     except Exception as e:
         logging.basicConfig(format='[%(levelname)s] %(asctime)s - %(message)s', level=logging.ERROR)
         logging.error(e)
         logging.error(traceback.print_exc())
         return {}, 500
 
+'''
+GET /results/<job_id>/
+
+Checks if background job with the given job ID is done executing.
+
+URL Parameters:
+job_id (str): The Job ID of the background job.
+
+Returns (JSON): 
+If job is finished: status code 200
+{
+    status (str): "Finished"
+    photos (List of str): The URLs of the JPEG for each page in the PDF
+    ocr (Dict): The OCR data for the PDF file
+    id (str): The Job ID for the completed background job
+}
+If job is NOT finished: status code 202
+{
+    status (str): "Not yet finished"
+    photos (List of str): []
+    ocr (Dict): {}
+    id (str): None
+}
+'''
 @app.route('/results/<job_id>/', methods=['GET'])
 def get_results(job_id):
     job = Job.fetch(job_id, connection=conn)
@@ -95,19 +150,30 @@ def get_results(job_id):
     else:
         return {"status": "Not yet finished", "photos": [], "ocr": {}, "id": None}, 202
 
+'''
+DELETE /delete/
+
+Deletes the given file's JPEGs from AWS S3.
+
+Request Body:
+{
+    fileID: The file ID of the to be deleted file
+}
+
+'''
 @app.route('/delete/', methods=['DELETE'])
 def delete():
     try:
         data = request.json
 
-        encoded_photos =  delete_folder("{}/".format(data['fileID']))
+        delete_folder("{}/".format(data['fileID']))
 
-        return jsonify({"photos": encoded_photos}), 200
+        return 200
     except Exception as e:
         logging.basicConfig(format='[%(levelname)s] %(asctime)s - %(message)s', level=logging.ERROR)
         logging.error(e)
         logging.error(traceback.print_exc())
-        return {}, 500
+        return 500
 
 @app.route('/')
 def serve():
