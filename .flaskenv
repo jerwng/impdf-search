@@ -1,2 +1,4 @@
 FLASK_APP=server.py
-FLASK_ENV=production
+FLASK_ENV=development
+FLASK_RUN_HOST=localhost
+FLASK_RUN_PORT=5001
