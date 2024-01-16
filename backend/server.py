@@ -11,7 +11,7 @@ from worker import conn
 
 from utils import delete_folder, delete_folder, search_word_photo
 
-app = Flask(__name__, static_folder='app/build', static_url_path='/')
+app = Flask(__name__)
 cors = CORS(app)
 
 app.config['CORS_HEADERS'] = 'Content-Type'
