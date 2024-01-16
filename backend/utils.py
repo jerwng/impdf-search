@@ -78,7 +78,7 @@ def ocr(img):
     res_pic_dict = {}
 
     # NOTE: Changing tesseract path is necessary to host server on Heroku.
-    pytesseract.pytesseract.tesseract_cmd = '/app/.apt/usr/bin/tesseract'
+    # pytesseract.pytesseract.tesseract_cmd = '/app/.apt/usr/bin/tesseract'
 
     ocr_res = pytesseract.image_to_data(img, config=config, output_type=Output.DICT)
 
