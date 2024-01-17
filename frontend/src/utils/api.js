@@ -1,7 +1,6 @@
 // TODO: Change API URL in production
 
-// const url = "http://impdf-searcher.herokuapp.com"
-const url = "http://localhost:5001";
+const url = "https://impdf-search-035cd26011cd.herokuapp.com";
 
 export function uapi_test() {
   return new Promise(function (resolve, reject) {

@@ -12,6 +12,7 @@
 # files
 ocr/
 *.rdb
+.DS_Store
 
 # pycache
 __pycache__/

@@ -22,6 +22,14 @@ app.config['UPLOAD_EXTENSIONS'] = ['.pdf']
 q = Queue(connection=conn)
 
 '''
+Home API
+Test landing
+'''
+@app.route('/', methods=['GET'])
+def home():
+    return '''<h1>Hello World 123</h1>'''
+
+'''
 Test API
 '''
 @app.route('/test/', methods=['GET'])
