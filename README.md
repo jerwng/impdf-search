@@ -29,6 +29,13 @@ The front end is built using React.
 
 - The images are displayed directly from Amazon S3 using presigned URLs returned by the server.
 
+#### Package Overrides
+
+To address security vulnerabilities in `react-scripts@5.0.1`, versions of the following packages are overriden in `package.json`:
+
+- `nth-check`: `2.1.1`
+- `postcss`: `8.4.31`
+
 ### Server
 
 The server is built using Flask.
