@@ -24,7 +24,7 @@ pytesseract==0.3.8
 python-dateutil==2.8.2
 python-dotenv==0.19.0
 redis==3.5.3
-requests==2.26.0
+requests==2.31.0
 rq==1.10.0
 s3transfer==0.10.0
 six==1.16.0
