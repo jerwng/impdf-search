@@ -35,6 +35,8 @@ Change branch to `dev`
 ##### Starting Flask Server
 
 - In new terminal window (venv), cd to `backend`
+- Add `HEROKU_ENV=False` to `.env`
+  - This environment variable is only used on Heroku environment, where it is necessary to update Tesseract path.
 - Start Flask: `flask run`
 
 ##### Starting Redis Worker
@@ -71,6 +73,8 @@ Change branch to `dev`
     - `AWS_SECRET_ACCESS_KEY`
     - `TESSDATA_PREFIX: ../.apt/usr/share/tesseract-ocr/4.00/tessdata`
       - Note `../`. Directory is changed to `backend` by `heroku.sh`. The `.apt` folder is located in the root directory.
+    - `HEROKU_ENV: True`
+      - Updates Tesseract path to correct location when on Heroku Environment
   - Add addon - Heroku Data for Redis:
     - Automatically adds `REDIS_URL` and `REDIS_TLS_URL` config vars
   - Deploy `main` branch

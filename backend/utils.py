@@ -2,6 +2,7 @@ import pytesseract
 import cv2
 import numpy as np
 import boto3
+import os
 
 from pdf2image import convert_from_bytes
 from pytesseract import Output # import Output from Pytesseract to get image_to_data to output in dict
@@ -78,7 +79,8 @@ def ocr(img):
     res_pic_dict = {}
 
     # NOTE: Changing tesseract path is necessary to host server on Heroku.
-    pytesseract.pytesseract.tesseract_cmd = '/app/.apt/usr/bin/tesseract'
+    if os.environ.get("HEROKU_ENV") in {'True'}:
+        pytesseract.pytesseract.tesseract_cmd = '/app/.apt/usr/bin/tesseract'
 
     ocr_res = pytesseract.image_to_data(img, config=config, output_type=Output.DICT)
 
