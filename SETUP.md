@@ -26,17 +26,24 @@ Change branch to `dev`
 - Start the virtual environment: `source venv/bin/activate`
 - With `pip`, run `pip install -r '../requirements.txt'` to install the required packages
 
+##### Create `.env` for Environment Variables
+
+- Add `AWS_ACCESS_KEY_ID` and `AWS_SECRET_ACCESS_KEY`
+  - See [AWS S3](#aws-s3) Section
+- Add `REDIS_URL=redis://localhost:6379`
+  - See [Starting Redis Server](#starting-redis-server) and verify correct port
+- Add `HEROKU_ENV=False`
+  - This environment variable is only used on Heroku environment, where it is necessary to update Tesseract path.
+- - If running on macOS, add `export OBJC_DISABLE_INITIALIZE_FORK_SAFETY=YES` to `.env` to bypass fork error with Redis and `rq`
+
 ##### Starting Redis Server
 
 - In new terminal window (venv), cd to `backend`
 - Start Redis server: `redis-server`
-- If running on macOS, add `export OBJC_DISABLE_INITIALIZE_FORK_SAFETY=YES` to `.env` to bypass fork error with `rq`
 
 ##### Starting Flask Server
 
 - In new terminal window (venv), cd to `backend`
-- Add `HEROKU_ENV=False` to `.env`
-  - This environment variable is only used on Heroku environment, where it is necessary to update Tesseract path.
 - Start Flask: `flask run`
 
 ##### Starting Redis Worker
@@ -49,7 +56,6 @@ Change branch to `dev`
 #### AWS S3
 
 - Create bucket with name `impdf-searcher`
-- Add `AWS_ACCESS_KEY_ID` and `AWS_SECRET_ACCESS_KEY` environment variables to `.env`
 
 #### Render
 
@@ -74,7 +80,9 @@ Change branch to `dev`
     - `TESSDATA_PREFIX: ../.apt/usr/share/tesseract-ocr/4.00/tessdata`
       - Note `../`. Directory is changed to `backend` by `heroku.sh`. The `.apt` folder is located in the root directory.
     - `HEROKU_ENV: True`
-      - Updates Tesseract path to correct location when on Heroku Environment
+      - Flag for Heroku Environment, used to indicate updating Tesseract path is required
+    - `TESSERACT_PATH: /app/.apt/usr/bin/tesseract`
+      - Updates installed Tesseract path on Heroku
   - Add addon - Heroku Data for Redis:
     - Automatically adds `REDIS_URL` and `REDIS_TLS_URL` config vars
   - Deploy `main` branch
