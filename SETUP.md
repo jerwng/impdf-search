@@ -34,7 +34,7 @@ Change branch to `dev`
   - See [Starting Redis Server](#starting-redis-server) and verify correct port
 - Add `HEROKU_ENV=False`
   - This environment variable is only used on Heroku environment, where it is necessary to update Tesseract path.
-- - If running on macOS, add `export OBJC_DISABLE_INITIALIZE_FORK_SAFETY=YES` to `.env` to bypass fork error with Redis and `rq`
+- If running on macOS, add `OBJC_DISABLE_INITIALIZE_FORK_SAFETY=YES` to `.env` to [bypass fork error with Redis and `rq` ](https://github.com/rq/rq/issues/1418)
 
 ##### Starting Redis Server
 
