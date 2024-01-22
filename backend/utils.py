@@ -80,7 +80,7 @@ def ocr(img):
 
     # NOTE: Changing tesseract path is necessary to host server on Heroku.
     if os.environ.get("HEROKU_ENV") in {'True'}:
-        pytesseract.pytesseract.tesseract_cmd = '/app/.apt/usr/bin/tesseract'
+        pytesseract.pytesseract.tesseract_cmd = os.environ.get('TESSERACT_PATH')
 
     ocr_res = pytesseract.image_to_data(img, config=config, output_type=Output.DICT)
 
