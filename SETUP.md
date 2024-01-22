@@ -2,8 +2,6 @@
 
 ## Install and Running Locally
 
-Change branch to `dev`
-
 #### Front End
 
 - Change directory to `frontend`
