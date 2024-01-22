@@ -9,6 +9,8 @@ from pytesseract import Output # import Output from Pytesseract to get image_to_
 from dotenv import load_dotenv
 from botocore.client import Config
 
+load_dotenv()
+
 '''
 For each PDF page, converts, saves to JPEG and performs OCR.
 
@@ -25,7 +27,6 @@ Returns (Tuple):
 )
 '''
 def pdf_to_photos(pdf, id):
-    load_dotenv()
     s3 = boto3.client('s3', config=Config(signature_version='s3v4'))
 
     pages = convert_from_bytes(pdf)
@@ -79,8 +80,8 @@ def ocr(img):
     res_pic_dict = {}
 
     # NOTE: Changing tesseract path is necessary to host server on Heroku.
-    if os.environ.get("HEROKU_ENV") in {'True'}:
-        pytesseract.pytesseract.tesseract_cmd = os.environ.get('TESSERACT_PATH')
+    if os.getenv("HEROKU_ENV") in {'True'}:
+        pytesseract.pytesseract.tesseract_cmd = os.getenv('TESSERACT_PATH')
 
     ocr_res = pytesseract.image_to_data(img, config=config, output_type=Output.DICT)
 

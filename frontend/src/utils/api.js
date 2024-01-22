@@ -1,6 +1,4 @@
-// TODO: Change API URL in production
-
-const url = "https://impdf-search-035cd26011cd.herokuapp.com";
+const url = process.env.REACT_APP_API_URL;
 
 export function uapi_test() {
   return new Promise(function (resolve, reject) {
