@@ -8,6 +8,12 @@ Change branch to `dev`
 
 - Change directory to `frontend`
 
+##### Create `.env` for Environment Variables
+
+```
+REACT_APP_API_URL=http://localhost:5001
+```
+
 ##### Installing Front End Packages
 
 - With `npm`, run `npm install` to install the required packages
@@ -28,6 +34,14 @@ Change branch to `dev`
 
 ##### Create `.env` for Environment Variables
 
+```
+AWS_ACCESS_KEY_ID=(secret)
+AWS_SECRET_ACCESS_KEY= (secret)
+REDIS_URL=redis://localhost:6379
+HEROKU_ENV=False
+OBJC_DISABLE_INITIALIZE_FORK_SAFETY=YES (macOS only)
+```
+
 - Add `AWS_ACCESS_KEY_ID` and `AWS_SECRET_ACCESS_KEY`
   - See [AWS S3](#aws-s3) Section
 - Add `REDIS_URL=redis://localhost:6379`
@@ -35,6 +49,15 @@ Change branch to `dev`
 - Add `HEROKU_ENV=False`
   - This environment variable is only used on Heroku environment, where it is necessary to update Tesseract path.
 - If running on macOS, add `OBJC_DISABLE_INITIALIZE_FORK_SAFETY=YES` to `.env` to [bypass fork error with Redis and `rq` ](https://github.com/rq/rq/issues/1418)
+
+##### Create `.flaskenv` for Flask Configuration
+
+```
+FLASK_APP=server.py
+FLASK_DEBUG=True
+FLASK_RUN_HOST=localhost
+FLASK_RUN_PORT=5001
+```
 
 ##### Starting Redis Server
 
@@ -64,6 +87,7 @@ Change branch to `dev`
   - Set root directory to `frontend`
   - Set build command to `npm run build`
   - Set publish directory to `build`
+  - Add `REACT_APP_API_URL` environment variable to server API URL
   - Deploy `main` branch
 
 #### Heroku
