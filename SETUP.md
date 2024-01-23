@@ -37,7 +37,6 @@ AWS_ACCESS_KEY_ID=(secret)
 AWS_SECRET_ACCESS_KEY= (secret)
 REDIS_URL=redis://localhost:6379
 HEROKU_ENV=False
-OBJC_DISABLE_INITIALIZE_FORK_SAFETY=YES (macOS only)
 ```
 
 - Add `AWS_ACCESS_KEY_ID` and `AWS_SECRET_ACCESS_KEY`
@@ -46,7 +45,6 @@ OBJC_DISABLE_INITIALIZE_FORK_SAFETY=YES (macOS only)
   - See [Starting Redis Server](#starting-redis-server) and verify correct port
 - Add `HEROKU_ENV=False`
   - This environment variable is only used on Heroku environment, where it is necessary to update Tesseract path.
-- If running on macOS, add `OBJC_DISABLE_INITIALIZE_FORK_SAFETY=YES` to `.env` to [bypass fork error with Redis and `rq` ](https://github.com/rq/rq/issues/1418)
 
 ##### Create `.flaskenv` for Flask Configuration
 
@@ -70,7 +68,13 @@ FLASK_RUN_PORT=5001
 ##### Starting Redis Worker
 
 - In new terminal window (venv), cd to `backend`
-- Start worker: `python worker.py`
+- Start worker:
+  ```
+  export OBJC_DISABLE_INITIALIZE_FORK_SAFETY=YES
+  python worker.py
+  ```
+- On macOS, `export OBJC_DISABLE_INITIALIZE_FORK_SAFETY=YES` is required to [bypass fork error with Redis and `rq` ](https://github.com/rq/rq/issues/1418).
+- Note this environment variable is required before starting `worker.py`. Including this in `.env` and calling `load_dotenv()` will not resolve the issue.
 
 ## Deployment
 
