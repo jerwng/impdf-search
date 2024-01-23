@@ -162,6 +162,10 @@ function App() {
     }
   };
 
+  const handleImageModalClose = () => {
+    handleClickThumbnail(undefined);
+  };
+
   return (
     <div className="App">
       <TopNavbar />
@@ -174,9 +178,12 @@ function App() {
       />
       <Images photos={displayedPhotos} handleClick={handleClickThumbnail} />
       <ImageModal
-        selectedPhoto={displayedPhotos[selectedPhotoID]}
-        selectedPhotoID={selectedPhotoID}
-        setSelectedPhotoID={handleClickThumbnail}
+        selectedPhotoURL={
+          selectedPhotoID !== undefined
+            ? displayedPhotos[selectedPhotoID]
+            : undefined
+        }
+        onModalClose={handleImageModalClose}
       />
       <Status show={spinnerShow} message={statusMessage} />
     </div>
