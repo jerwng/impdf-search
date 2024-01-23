@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import "./css/App.css";
 
-import TopNavbar from "./navbar.js";
+import { TopNavbar } from "components/TopNavbar";
 import Inputs from "./inputs.js";
 import Images from "./images.js";
 import ImageModal from "./image-modal.js";
