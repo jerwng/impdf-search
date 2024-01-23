@@ -2,7 +2,7 @@ import React from "react";
 import Spinner from "react-bootstrap/Spinner";
 import Alert from "react-bootstrap/Alert";
 
-import "./css/status.css";
+import "css/status.css";
 
 function Status(props) {
   let spinner;

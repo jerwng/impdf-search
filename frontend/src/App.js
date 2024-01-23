@@ -5,7 +5,7 @@ import { TopNavbar } from "components/TopNavbar";
 import Inputs from "components/inputs/inputs";
 import Images from "components/images/images";
 import ImageModal from "components/images/ImageModal";
-import Status from "./status.js";
+import Status from "components/status.js";
 
 import {
   uapi_post_pdf,
