@@ -7,6 +7,7 @@
     "module": "Node16",
     "moduleResolution": "node16",
     "outDir": "dist",
+    "baseUrl": "src"
   },
-  "include": ["src/**/*"]
+  "include": ["src", "src/**/*"]
 }
