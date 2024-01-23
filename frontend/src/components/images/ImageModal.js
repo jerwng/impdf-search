@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 
 import Modal from "react-bootstrap/Modal";
 
-import "./css/images.css";
+import "css/images.css";
 
 /**
  * The image modal component to display the enlarged selected image.
