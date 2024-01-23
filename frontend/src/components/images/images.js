@@ -3,7 +3,7 @@ import React from "react";
 import Row from "react-bootstrap/Row";
 import Col from "react-bootstrap/Col";
 
-import "./css/images.css";
+import "css/images.css";
 
 /**
  * The images component to display the rows of thumbnail sized images.

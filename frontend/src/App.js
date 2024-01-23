@@ -2,8 +2,8 @@ import React, { useState } from "react";
 import "./css/App.css";
 
 import { TopNavbar } from "components/TopNavbar";
-import Inputs from "./inputs.js";
-import Images from "./images.js";
+import Inputs from "components/inputs/inputs";
+import Images from "components/images/images";
 import ImageModal from "./image-modal.js";
 import Status from "./status.js";
 
