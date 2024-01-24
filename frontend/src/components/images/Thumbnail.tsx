@@ -13,16 +13,11 @@ export const Thumbnail = ({
     onClick(id);
   };
 
-  return (
-    <Image
-      className="image-thumbnail"
-      src={photo}
-      alt=""
-      onClick={handleClick}
-    />
-  );
+  return <Image src={photo} alt="" onClick={handleClick} />;
 };
 
 const Image = styled.img`
   cursor: pointer;
+  height: 100px;
+  width: 100px;
 `;
