@@ -3,6 +3,8 @@ import React, { useState, useEffect } from "react";
 import Form from "react-bootstrap/Form";
 import Button from "react-bootstrap/Button";
 
+import { SearchWords } from "components/inputs/SearchWords";
+
 import "css/inputs.css";
 
 /**
@@ -56,8 +58,8 @@ function Inputs(props) {
         file={file}
       />
       <SearchWords
-        handleSetSearchWords={props.handleSetSearchWords}
         disabled={props.searchDisabled}
+        onSearchWords={props.handleSetSearchWords}
       />
     </div>
   );
@@ -127,52 +129,6 @@ function UploadPDF(props) {
           Upload
         </Button>
       </div>
-    </Form>
-  );
-}
-
-/**
- * Sub-Component for: Inputs
- * @param {Function} props.handleSetSearchWords Handler to submit the search words.
- * @param {Boolean} props.disabled Boolean to indicate if there are photos available to search.
- *
- * @returns The search words component to filter images with selected words.
- */
-function SearchWords(props) {
-  /**
-   *
-   * @param {Event} e Event for the submit event.
-   */
-  const handleSubmit = (e) => {
-    e.preventDefault();
-
-    let newSearchWord = undefined;
-    /* e.target[0].value contains the search word value in the input */
-    if (e.target[0].value !== "") {
-      newSearchWord = e.target[0].value;
-    }
-
-    props.handleSetSearchWords(newSearchWord);
-  };
-
-  return (
-    <Form onSubmit={handleSubmit}>
-      <Form.Group id="search-words-form-group">
-        <h3 className="inputs-label">Search Words</h3>
-        <Form.Control
-          id="search-words-input"
-          placeholder="Enter Search Words"
-          disabled={props.disabled}
-        />
-      </Form.Group>
-      <Button
-        id="search-words-button"
-        variant="success"
-        type="submit"
-        disabled={props.disabled}
-      >
-        Search
-      </Button>
     </Form>
   );
 }
