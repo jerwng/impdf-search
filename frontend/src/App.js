@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import "./css/App.css";
 
 import { TopNavbar } from "components/TopNavbar";
-import Inputs from "components/inputs/inputs";
+import { Inputs } from "components/inputs/Inputs";
 import { Images } from "components/images/Images";
 import { ImageModal } from "components/images/ImageModal";
 import Status from "components/status.js";
@@ -170,11 +170,11 @@ function App() {
     <div className="App">
       <TopNavbar />
       <Inputs
-        handleUpload={handleUpload}
-        handleSetSearchWords={handleSetSearchWords}
-        handleDeleteFileServer={handleDeleteFileServer}
-        loading={spinnerShow}
-        searchDisabled={fileData.allPhotos.length === 0}
+        onFileSubmit={handleUpload}
+        onSearchWords={handleSetSearchWords}
+        onFileDelete={handleDeleteFileServer}
+        isLoading={spinnerShow}
+        isSearchDisabled={fileData.allPhotos.length === 0}
       />
       <Images photos={displayedPhotos} onClick={handleClickThumbnail} />
       <ImageModal

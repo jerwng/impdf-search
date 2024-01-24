@@ -5,10 +5,10 @@ import Button from "react-bootstrap/Button";
 import { StyledInputHeader } from "./styles";
 
 export const SearchWords = ({
-  disabled,
+  isDisabled,
   onSearchWords,
 }: {
-  disabled: boolean;
+  isDisabled: boolean;
   onSearchWords: (searchWord: string | undefined) => void;
 }) => {
   const handleSubmit = (e: MouseEvent<HTMLFormElement>) => {
@@ -28,10 +28,10 @@ export const SearchWords = ({
         <Form.Control
           name="search-words-input"
           placeholder="Enter Search Words"
-          disabled={disabled}
+          disabled={isDisabled}
         />
       </Form.Group>
-      <Button variant="success" type="submit" disabled={disabled}>
+      <Button variant="success" type="submit" disabled={isDisabled}>
         Search
       </Button>
     </Form>
