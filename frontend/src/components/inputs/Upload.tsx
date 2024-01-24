@@ -73,5 +73,7 @@ const ButtonContainer = styled.div`
 `;
 
 const StyledFormFile = styled(Form.File)`
-  cursor: pointer;
+  input {
+    cursor: pointer;
+  }
 `;
