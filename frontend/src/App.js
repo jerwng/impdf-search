@@ -4,7 +4,7 @@ import "./css/App.css";
 import { TopNavbar } from "components/TopNavbar";
 import Inputs from "components/inputs/inputs";
 import { Images } from "components/images/Images";
-import ImageModal from "components/images/ImageModal";
+import { ImageModal } from "components/images/ImageModal";
 import Status from "components/status.js";
 
 import {

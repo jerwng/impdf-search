@@ -1,13 +1,13 @@
 import Modal from "react-bootstrap/Modal";
-import "css/images.css";
+import styled from "styled-components";
 
-function ImageModal({
+export const ImageModal = ({
   selectedPhotoURL,
   onModalClose,
 }: {
   selectedPhotoURL: string; // data:image/jpeg;base64 format
   onModalClose: () => void;
-}) {
+}) => {
   /**
    * Handler for when the modal is closed.
    */
@@ -24,11 +24,18 @@ function ImageModal({
         {" "}
         Image{" "}
       </Modal.Header>
-      <Modal.Body>
-        <img className="image-modal" src={selectedPhotoURL} alt="enlarged" />
-      </Modal.Body>
+      <StyledModalBody>
+        <EnlargedImage src={selectedPhotoURL} alt="enlarged" />
+      </StyledModalBody>
     </Modal>
   );
-}
+};
 
-export default ImageModal;
+const StyledModalBody = styled(Modal.Body)`
+  display: flex;
+  justify-content: center;
+`;
+
+const EnlargedImage = styled.img`
+  width: 90%;
+`;
