@@ -3,7 +3,7 @@ import "./css/App.css";
 
 import { TopNavbar } from "components/TopNavbar";
 import Inputs from "components/inputs/inputs";
-import Images from "components/images/images";
+import { Images } from "components/images/Images";
 import ImageModal from "components/images/ImageModal";
 import Status from "components/status.js";
 
@@ -176,7 +176,7 @@ function App() {
         loading={spinnerShow}
         searchDisabled={fileData.allPhotos.length === 0}
       />
-      <Images photos={displayedPhotos} handleClick={handleClickThumbnail} />
+      <Images photos={displayedPhotos} onClick={handleClickThumbnail} />
       <ImageModal
         selectedPhotoURL={
           selectedPhotoID !== undefined
