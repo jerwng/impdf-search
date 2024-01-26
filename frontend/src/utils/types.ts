@@ -8,14 +8,14 @@ export type Ocr = {
 
 export type APIGetResultsRes = {
   id: string;
-  ocr: Record<number, Ocr>;
+  ocr: Ocr;
   photos: string[];
   status: string;
 };
 
 export type APIPostPDFRes = {
-  fileId: string;
-  jobId: string;
+  fileID: string;
+  jobID: string;
 };
 
 export type APIPostSearchRes = {
@@ -24,5 +24,5 @@ export type APIPostSearchRes = {
 
 export type APIDeleteRes = {
   status: string;
-  fileId: string;
+  fileID: string;
 };

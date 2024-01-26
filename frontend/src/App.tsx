@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import { useState } from "react";
 import "./css/App.css";
 
 import { TopNavbar } from "components/TopNavbar";
@@ -15,36 +15,35 @@ import {
   uapi_get_results,
   uapi_delete,
 } from "utils/api";
+import { Ocr } from "utils/types";
+import { initOCR } from "utils/constants";
 
-/**
- * Main parent component for the web app. Parent component for the Navbar, Input and Image sub-components.
- *
- * @returns {<div>} The main parent component for the web app.
- */
 function App() {
-  const [fileData, setFileData] = useState({
+  const [fileData, setFileData] = useState<{
+    allPhotos: string[];
+    ocr: Ocr;
+    fileID: string | undefined;
+  }>({
     // allPhoto: photo for each page of the PDF
     allPhotos: [],
-    ocr: {},
+    ocr: initOCR,
     fileID: undefined,
   });
 
   // displayedPhotos: photos filtered by the search bar.
-  const [displayedPhotos, setDisplayedPhotos] = useState([]);
-  const [selectedPhotoID, setselectedPhotoID] = useState(undefined);
+  const [displayedPhotos, setDisplayedPhotos] = useState<string[]>([]);
+  const [selectedPhotoID, setselectedPhotoID] = useState<number | undefined>();
   const [spinnerShow, setSpinnerShow] = useState(false);
-  const [statusMessage, setStatusMessage] = useState(undefined);
+  const [statusMessage, setStatusMessage] = useState<string | undefined>();
 
   let pollingIntervalCount = 0;
-  let pollingInterval;
+  let pollingInterval: ReturnType<typeof setInterval>;
 
   /**
    * Handler for the Inputs sub-component.
    * Submit the file to server to start performing OCR.
-   *
-   * @param {File} file The uploaded file selected by the user.
    */
-  const handleUpload = (file) => {
+  const handleUpload = (file: File) => {
     const file_form_data = new FormData();
     file_form_data.append("file", file);
 
@@ -73,10 +72,8 @@ function App() {
 
   /**
    * Polling function to check if the OCR background job is completed.
-   *
-   * @param {String} jobID The jobID for the OCR background job.
    */
-  const pollingTimer = (jobID) => {
+  const pollingTimer = (jobID: string) => {
     uapi_get_results(jobID).then((res) => {
       /**
        * Render the processed photo and stop polling cuntion once OCR background job
@@ -120,7 +117,7 @@ function App() {
 
     setFileData({
       allPhotos: [],
-      ocr: {},
+      ocr: initOCR,
       fileID: undefined,
     });
 
@@ -129,20 +126,18 @@ function App() {
 
   /**
    * Handler to enlarge the clicked photo into a modal.
-   * @param {Number} id The id for the clicked photo.
    */
-  const handleClickThumbnail = (id) => {
+  const handleClickThumbnail = (id: number | undefined) => {
     setselectedPhotoID(id);
   };
 
   /**
    * Handler to filter the list of photos to the ones containing the inputted search word.
-   *
-   * @param {String} newSearchWord
    */
-  const handleSetSearchWords = (newSearchWord) => {
-    const newSearchWordArr =
-      typeof newSearchWord !== "undefined" ? newSearchWord.split(" ") : [];
+  const handleSetSearchWords = (newSearchWord: string | undefined) => {
+    if (!fileData.fileID) return;
+
+    const newSearchWordArr = newSearchWord ? newSearchWord.split(" ") : [];
 
     if (newSearchWordArr.length === 0) {
       setDisplayedPhotos(fileData.allPhotos);
@@ -175,7 +170,7 @@ function App() {
         onFileSubmit={handleUpload}
         onSearchWords={handleSetSearchWords}
         onFileDelete={handleDeleteFileServer}
-        isLoading={spinnerShow}
+        isFileLoading={spinnerShow}
         isSearchDisabled={fileData.allPhotos.length === 0}
       />
       <Images photos={displayedPhotos} onClick={handleClickThumbnail} />
@@ -192,7 +187,7 @@ function App() {
           spinnerShow
             ? StatusSpinner()
             : statusMessage
-            ? StatusMessage()
+            ? StatusMessage({ message: statusMessage })
             : undefined
         }
       />

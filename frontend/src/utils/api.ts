@@ -44,7 +44,7 @@ export function uapi_get_results(jobID: string) {
   });
 }
 
-export function uapi_post_pdf(pdf: File) {
+export function uapi_post_pdf(pdf: FormData) {
   return new Promise<APIPostPDFRes>(function (resolve, reject) {
     fetch(`${url}/pdf/`, {
       method: "POST",

@@ -5,7 +5,7 @@ export const ImageModal = ({
   selectedPhotoURL,
   onModalClose,
 }: {
-  selectedPhotoURL: string; // data:image/jpeg;base64 format
+  selectedPhotoURL: string | undefined; // data:image/jpeg;base64 format
   onModalClose: () => void;
 }) => {
   /**
