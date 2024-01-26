@@ -5,7 +5,9 @@ import { TopNavbar } from "components/TopNavbar";
 import { Inputs } from "components/inputs/Inputs";
 import { Images } from "components/images/Images";
 import { ImageModal } from "components/images/ImageModal";
-import Status from "components/status.js";
+import { Status } from "components/status/Status";
+import { StatusSpinner } from "components/status/StatusSpinner";
+import { StatusMessage } from "components/status/StatusMessage";
 
 import {
   uapi_post_pdf,
@@ -185,7 +187,15 @@ function App() {
         }
         onModalClose={handleImageModalClose}
       />
-      <Status show={spinnerShow} message={statusMessage} />
+      <Status
+        status={
+          spinnerShow
+            ? StatusSpinner()
+            : statusMessage
+            ? StatusMessage()
+            : undefined
+        }
+      />
     </div>
   );
 }
