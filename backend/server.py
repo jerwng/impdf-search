@@ -149,6 +149,7 @@ If job is NOT finished: status code 202
 }
 '''
 @app.route('/results/<job_id>/', methods=['GET'])
+@cross_origin()
 def get_results(job_id):
     job = Job.fetch(job_id, connection=conn)
 
@@ -170,18 +171,19 @@ Request Body:
 
 '''
 @app.route('/delete/', methods=['DELETE'])
+@cross_origin()
 def delete():
     try:
         data = request.json
 
         delete_folder("{}/".format(data['fileID']))
 
-        return 200
+        return jsonify({"status": "Deleted", "fileID": data['fileID']}), 200
     except Exception as e:
         logging.basicConfig(format='[%(levelname)s] %(asctime)s - %(message)s', level=logging.ERROR)
         logging.error(e)
         logging.error(traceback.print_exc())
-        return 500
+        return {}, 500
 
 @app.route('/')
 def serve():

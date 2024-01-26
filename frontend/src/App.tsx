@@ -1,48 +1,49 @@
-import React, { useState } from "react";
-import "./css/App.css";
+import { useState } from "react";
 
-import TopNavbar from "./navbar.js";
-import Inputs from "./inputs.js";
-import Images from "./images.js";
-import ImageModal from "./image-modal.js";
-import Status from "./status.js";
+import { TopNavbar } from "components/TopNavbar";
+import { Inputs } from "components/inputs/Inputs";
+import { Images } from "components/images/Images";
+import { ImageModal } from "components/images/ImageModal";
+import { Status } from "components/status/Status";
+import { StatusSpinner } from "components/status/StatusSpinner";
+import { StatusMessage } from "components/status/StatusMessage";
 
 import {
   uapi_post_pdf,
   uapi_post_search,
   uapi_get_results,
   uapi_delete,
-} from "./utils/api.js";
+} from "utils/api";
+import { Ocr } from "utils/types";
+import { initOCR } from "utils/constants";
+import styled from "styled-components";
 
-/**
- * Main parent component for the web app. Parent component for the Navbar, Input and Image sub-components.
- *
- * @returns {<div>} The main parent component for the web app.
- */
 function App() {
-  const [fileData, setFileData] = useState({
+  const [fileData, setFileData] = useState<{
+    allPhotos: string[];
+    ocr: Ocr;
+    fileID: string | undefined;
+  }>({
     // allPhoto: photo for each page of the PDF
     allPhotos: [],
-    ocr: {},
+    ocr: initOCR,
     fileID: undefined,
   });
 
   // displayedPhotos: photos filtered by the search bar.
-  const [displayedPhotos, setDisplayedPhotos] = useState([]);
-  const [selectedPhotoID, setselectedPhotoID] = useState(undefined);
+  const [displayedPhotos, setDisplayedPhotos] = useState<string[]>([]);
+  const [selectedPhotoID, setselectedPhotoID] = useState<number | undefined>();
   const [spinnerShow, setSpinnerShow] = useState(false);
-  const [statusMessage, setStatusMessage] = useState(undefined);
+  const [statusMessage, setStatusMessage] = useState<string | undefined>();
 
   let pollingIntervalCount = 0;
-  let pollingInterval;
+  let pollingInterval: ReturnType<typeof setInterval>;
 
   /**
    * Handler for the Inputs sub-component.
    * Submit the file to server to start performing OCR.
-   *
-   * @param {File} file The uploaded file selected by the user.
    */
-  const handleUpload = (file) => {
+  const handleUpload = (file: File) => {
     const file_form_data = new FormData();
     file_form_data.append("file", file);
 
@@ -71,10 +72,8 @@ function App() {
 
   /**
    * Polling function to check if the OCR background job is completed.
-   *
-   * @param {String} jobID The jobID for the OCR background job.
    */
-  const pollingTimer = (jobID) => {
+  const pollingTimer = (jobID: string) => {
     uapi_get_results(jobID).then((res) => {
       /**
        * Render the processed photo and stop polling cuntion once OCR background job
@@ -118,7 +117,7 @@ function App() {
 
     setFileData({
       allPhotos: [],
-      ocr: {},
+      ocr: initOCR,
       fileID: undefined,
     });
 
@@ -127,20 +126,18 @@ function App() {
 
   /**
    * Handler to enlarge the clicked photo into a modal.
-   * @param {Number} id The id for the clicked photo.
    */
-  const handleClickThumbnail = (id) => {
+  const handleClickThumbnail = (id: number | undefined) => {
     setselectedPhotoID(id);
   };
 
   /**
    * Handler to filter the list of photos to the ones containing the inputted search word.
-   *
-   * @param {String} newSearchWord
    */
-  const handleSetSearchWords = (newSearchWord) => {
-    const newSearchWordArr =
-      typeof newSearchWord !== "undefined" ? newSearchWord.split(" ") : [];
+  const handleSetSearchWords = (newSearchWord: string | undefined) => {
+    if (!fileData.fileID) return;
+
+    const newSearchWordArr = newSearchWord ? newSearchWord.split(" ") : [];
 
     if (newSearchWordArr.length === 0) {
       setDisplayedPhotos(fileData.allPhotos);
@@ -162,25 +159,42 @@ function App() {
     }
   };
 
+  const handleImageModalClose = () => {
+    handleClickThumbnail(undefined);
+  };
+
   return (
-    <div className="App">
+    <AppContainer>
       <TopNavbar />
       <Inputs
-        handleUpload={handleUpload}
-        handleSetSearchWords={handleSetSearchWords}
-        handleDeleteFileServer={handleDeleteFileServer}
-        loading={spinnerShow}
-        searchDisabled={fileData.allPhotos.length === 0}
+        onFileSubmit={handleUpload}
+        onSearchWords={handleSetSearchWords}
+        onFileDelete={handleDeleteFileServer}
+        isFileLoading={spinnerShow}
+        isSearchDisabled={fileData.allPhotos.length === 0}
       />
-      <Images photos={displayedPhotos} handleClick={handleClickThumbnail} />
+      <Images photos={displayedPhotos} onClick={handleClickThumbnail} />
       <ImageModal
-        selectedPhoto={displayedPhotos[selectedPhotoID]}
-        selectedPhotoID={selectedPhotoID}
-        setSelectedPhotoID={handleClickThumbnail}
+        selectedPhotoURL={
+          selectedPhotoID !== undefined
+            ? displayedPhotos[selectedPhotoID]
+            : undefined
+        }
+        onModalClose={handleImageModalClose}
       />
-      <Status show={spinnerShow} message={statusMessage} />
-    </div>
+      <Status
+        status={
+          spinnerShow
+            ? StatusSpinner()
+            : statusMessage
+            ? StatusMessage({ message: statusMessage })
+            : undefined
+        }
+      />
+    </AppContainer>
   );
 }
+
+const AppContainer = styled.div``;
 
 export default App;
