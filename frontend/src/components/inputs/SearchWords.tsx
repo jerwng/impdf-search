@@ -31,9 +31,16 @@ export const SearchWords = ({
           disabled={isDisabled}
         />
       </Form.Group>
+      <ButtonContainer>
       <Button variant="success" type="submit" disabled={isDisabled}>
         Search
       </Button>
+      </ButtonContainer>
     </Form>
   );
 };
+
+const ButtonContainer = styled.div`
+  display: flex;
+  justify-content: center;
+`;

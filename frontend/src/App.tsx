@@ -1,5 +1,4 @@
 import { useState } from "react";
-import "./css/App.css";
 
 import { TopNavbar } from "components/TopNavbar";
 import { Inputs } from "components/inputs/Inputs";
@@ -17,6 +16,7 @@ import {
 } from "utils/api";
 import { Ocr } from "utils/types";
 import { initOCR } from "utils/constants";
+import styled from "styled-components";
 
 function App() {
   const [fileData, setFileData] = useState<{
@@ -164,7 +164,7 @@ function App() {
   };
 
   return (
-    <div className="App">
+    <AppContainer>
       <TopNavbar />
       <Inputs
         onFileSubmit={handleUpload}
@@ -191,8 +191,10 @@ function App() {
             : undefined
         }
       />
-    </div>
+    </AppContainer>
   );
 }
+
+const AppContainer = styled.div``;
 
 export default App;
