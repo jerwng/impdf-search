@@ -2,7 +2,7 @@ import { MouseEvent } from "react";
 
 import Form from "react-bootstrap/Form";
 import Button from "react-bootstrap/Button";
-import { StyledInputHeader } from "./styles";
+import styled from "styled-components";
 
 export const SearchWords = ({
   isDisabled,
@@ -24,7 +24,7 @@ export const SearchWords = ({
   return (
     <Form onSubmit={handleSubmit}>
       <Form.Group>
-        <StyledInputHeader>Search Words</StyledInputHeader>
+        <h3>Search Words</h3>
         <Form.Control
           name="search-words-input"
           placeholder="Enter Search Words"
@@ -32,9 +32,9 @@ export const SearchWords = ({
         />
       </Form.Group>
       <ButtonContainer>
-      <Button variant="success" type="submit" disabled={isDisabled}>
-        Search
-      </Button>
+        <Button variant="success" type="submit" disabled={isDisabled}>
+          Search
+        </Button>
       </ButtonContainer>
     </Form>
   );

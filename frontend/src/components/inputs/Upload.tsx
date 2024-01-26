@@ -1,7 +1,6 @@
 import { ChangeEvent, FormEvent, useState } from "react";
 import Form from "react-bootstrap/Form";
 import Button from "react-bootstrap/Button";
-import { StyledInputHeader } from "./styles";
 import styled from "styled-components";
 
 export const Upload = ({
@@ -39,7 +38,7 @@ export const Upload = ({
   return (
     <Form onSubmit={handleSubmit}>
       <Form.Group>
-        <StyledInputHeader>Upload PDF File</StyledInputHeader>
+        <h3>Upload PDF File</h3>
         <StyledFormFile
           label={file ? file.name : "No File Selected"}
           onChange={handleSetFile}
