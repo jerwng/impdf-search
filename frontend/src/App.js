@@ -14,7 +14,7 @@ import {
   uapi_post_search,
   uapi_get_results,
   uapi_delete,
-} from "./utils/api.js";
+} from "utils/api";
 
 /**
  * Main parent component for the web app. Parent component for the Navbar, Input and Image sub-components.

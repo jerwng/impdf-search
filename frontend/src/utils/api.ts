@@ -1,3 +1,11 @@
+import {
+  Ocr,
+  APIPostPDFRes,
+  APIGetResultsRes,
+  APIPostSearchRes,
+  APIDeleteRes,
+} from "./types";
+
 const url = process.env.REACT_APP_API_URL;
 
 export function uapi_test() {
@@ -18,8 +26,8 @@ export function uapi_test() {
   });
 }
 
-export function uapi_get_results(jobID) {
-  return new Promise((resolve, reject) => {
+export function uapi_get_results(jobID: string) {
+  return new Promise<APIGetResultsRes>((resolve, reject) => {
     fetch(`${url}/results/${jobID}/`, {
       method: "GET",
     })
@@ -36,8 +44,8 @@ export function uapi_get_results(jobID) {
   });
 }
 
-export function uapi_post_pdf(pdf) {
-  return new Promise(function (resolve, reject) {
+export function uapi_post_pdf(pdf: File) {
+  return new Promise<APIPostPDFRes>(function (resolve, reject) {
     fetch(`${url}/pdf/`, {
       method: "POST",
       body: pdf,
@@ -58,8 +66,12 @@ export function uapi_post_pdf(pdf) {
   });
 }
 
-export function uapi_post_search(searchBody) {
-  return new Promise(function (resolve, reject) {
+export function uapi_post_search(searchBody: {
+  ocr: Ocr;
+  searchWord: string[];
+  id: string;
+}) {
+  return new Promise<APIPostSearchRes>(function (resolve, reject) {
     fetch(`${url}/search/`, {
       method: "POST",
       headers: {
@@ -83,8 +95,8 @@ export function uapi_post_search(searchBody) {
   });
 }
 
-export function uapi_delete(searchBody) {
-  return new Promise(function (resolve, reject) {
+export function uapi_delete(searchBody: { fileID: string }) {
+  return new Promise<APIDeleteRes>(function (resolve, reject) {
     fetch(`${url}/delete/`, {
       method: "DELETE",
       headers: {
@@ -94,7 +106,7 @@ export function uapi_delete(searchBody) {
     })
       .then((res) => {
         if (res.ok) {
-          resolve(res);
+          resolve(res.json());
         } else {
           throw res;
         }
