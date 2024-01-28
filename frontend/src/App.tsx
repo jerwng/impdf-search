@@ -5,8 +5,6 @@ import { Inputs } from "components/inputs/Inputs";
 import { Images } from "components/images/Images";
 import { ImageModal } from "components/images/ImageModal";
 import { Status } from "components/status/Status";
-import { StatusSpinner } from "components/status/StatusSpinner";
-import { StatusMessage } from "components/status/StatusMessage";
 
 import {
   uapi_post_pdf,
@@ -182,15 +180,7 @@ function App() {
         }
         onModalClose={handleImageModalClose}
       />
-      <Status
-        status={
-          spinnerShow
-            ? StatusSpinner()
-            : statusMessage
-            ? StatusMessage({ message: statusMessage })
-            : undefined
-        }
-      />
+      <Status isLoading={spinnerShow} message={statusMessage} />
     </AppContainer>
   );
 }
