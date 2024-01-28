@@ -7,7 +7,7 @@ export const Status = ({
   message,
 }: {
   isLoading: boolean;
-  message: string | undefined;
+  message: string;
 }) => {
   return (
     <StatusContainer>
