@@ -1,5 +1,3 @@
-import { useState } from "react";
-
 import { TopNavbar } from "components/TopNavbar";
 import { Inputs } from "components/inputs/Inputs";
 import { Images } from "components/images/Images";
@@ -15,21 +13,12 @@ import {
   uapi_get_results,
   uapi_delete,
 } from "utils/api";
-import { Ocr } from "utils/types";
-import { initOCR } from "utils/constants";
+
 import styled from "styled-components";
+import { useOcr } from "hooks/useOcr";
 
 function App() {
-  const [fileData, setFileData] = useState<{
-    allPhotos: string[];
-    ocr: Ocr;
-    fileID: string | undefined;
-  }>({
-    // allPhoto: photo for each page of the PDF
-    allPhotos: [],
-    ocr: initOCR,
-    fileID: undefined,
-  });
+  const { fileData, setFileData, clearFileData } = useOcr();
 
   const {
     isStatusLoading,
@@ -130,11 +119,7 @@ function App() {
       uapi_delete(searchBody);
     }
 
-    setFileData({
-      allPhotos: [],
-      ocr: initOCR,
-      fileID: undefined,
-    });
+    clearFileData();
 
     clearPhotos();
   };
