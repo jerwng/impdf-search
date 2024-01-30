@@ -37,10 +37,10 @@ function App() {
   const {
     isStatusLoading,
     statusMessage,
-    handleSetStatusMessage,
-    handleClearStatusMessage,
-    handleSetIsStatusLoading,
-    handleClearIsStatusLoading,
+    setStatusMessage,
+    clearStatusMessage,
+    setIsStatusLoading,
+    clearIsStatusLoading,
   } = useStatus();
 
   let pollingIntervalCount = 0;
@@ -54,7 +54,7 @@ function App() {
     const file_form_data = new FormData();
     file_form_data.append("file", file);
 
-    handleSetIsStatusLoading();
+    setIsStatusLoading();
 
     /**
      * Delete previous uploaded file data from server
@@ -95,8 +95,8 @@ function App() {
         });
 
         setDisplayedPhotos(res.photos);
-        handleClearIsStatusLoading();
-        handleClearStatusMessage();
+        clearIsStatusLoading();
+        clearStatusMessage();
       }
 
       pollingIntervalCount += 1;
@@ -104,8 +104,8 @@ function App() {
       // Stop polling if background job is not done in 5 mins (30000 seconds).
       if (pollingIntervalCount > 30) {
         clearInterval(pollingInterval);
-        handleClearIsStatusLoading();
-        handleSetStatusMessage({
+        clearIsStatusLoading();
+        setStatusMessage({
           message: "Timed out. 5 minute time limit reached.",
         });
         pollingIntervalCount = 0;
@@ -163,7 +163,7 @@ function App() {
         })
         .catch(async (err) => {
           const err_json = await err.json();
-          handleSetStatusMessage({ message: err_json.message });
+          setStatusMessage({ message: err_json.message });
         });
     }
   };

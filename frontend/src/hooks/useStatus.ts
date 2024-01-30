@@ -23,9 +23,9 @@ export const useStatus = () => {
   return {
     isStatusLoading,
     statusMessage,
-    handleSetStatusMessage,
-    handleClearStatusMessage,
-    handleSetIsStatusLoading,
-    handleClearIsStatusLoading,
+    setStatusMessage: handleSetStatusMessage,
+    clearStatusMessage: handleClearStatusMessage,
+    setIsStatusLoading: handleSetIsStatusLoading,
+    clearIsStatusLoading: handleClearIsStatusLoading,
   };
 };
