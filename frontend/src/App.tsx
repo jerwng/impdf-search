@@ -7,6 +7,7 @@ import { ImageModal } from "components/images/ImageModal";
 import { Status } from "components/status/Status";
 
 import { useStatus } from "hooks/useStatus";
+import { usePhoto } from "hooks/usePhoto";
 
 import {
   uapi_post_pdf,
@@ -30,10 +31,6 @@ function App() {
     fileID: undefined,
   });
 
-  // displayedPhotos: photos filtered by the search bar.
-  const [displayedPhotos, setDisplayedPhotos] = useState<string[]>([]);
-  const [selectedPhotoID, setselectedPhotoID] = useState<number | undefined>();
-
   const {
     isStatusLoading,
     statusMessage,
@@ -42,6 +39,15 @@ function App() {
     setIsStatusLoading,
     clearIsStatusLoading,
   } = useStatus();
+
+  const {
+    photos,
+    selectedPhotoID,
+    setPhotos,
+    clearPhotos,
+    setSelectedPhotoID,
+    clearSelectedPhotoID,
+  } = usePhoto();
 
   let pollingIntervalCount = 0;
   let pollingInterval: ReturnType<typeof setInterval>;
@@ -94,7 +100,7 @@ function App() {
           fileID: res.id,
         });
 
-        setDisplayedPhotos(res.photos);
+        setPhotos({ photos: res.photos });
         clearIsStatusLoading();
         clearStatusMessage();
       }
@@ -130,14 +136,14 @@ function App() {
       fileID: undefined,
     });
 
-    setDisplayedPhotos([]);
+    clearPhotos();
   };
 
   /**
    * Handler to enlarge the clicked photo into a modal.
    */
-  const handleClickThumbnail = (id: number | undefined) => {
-    setselectedPhotoID(id);
+  const handleClickThumbnail = (id: number) => {
+    setSelectedPhotoID({ photoId: id });
   };
 
   /**
@@ -149,7 +155,7 @@ function App() {
     const newSearchWordArr = newSearchWord ? newSearchWord.split(" ") : [];
 
     if (newSearchWordArr.length === 0) {
-      setDisplayedPhotos(fileData.allPhotos);
+      setPhotos({ photos: fileData.allPhotos });
     } else {
       const searchBody = {
         ocr: fileData.ocr,
@@ -159,7 +165,7 @@ function App() {
 
       uapi_post_search(searchBody)
         .then((res) => {
-          setDisplayedPhotos(res.photos);
+          setPhotos({ photos: res.photos });
         })
         .catch(async (err) => {
           const err_json = await err.json();
@@ -169,7 +175,7 @@ function App() {
   };
 
   const handleImageModalClose = () => {
-    handleClickThumbnail(undefined);
+    clearSelectedPhotoID();
   };
 
   return (
@@ -182,12 +188,10 @@ function App() {
         isFileLoading={isStatusLoading}
         isSearchDisabled={fileData.allPhotos.length === 0}
       />
-      <Images photos={displayedPhotos} onClick={handleClickThumbnail} />
+      <Images photos={photos} onClick={handleClickThumbnail} />
       <ImageModal
         selectedPhotoURL={
-          selectedPhotoID !== undefined
-            ? displayedPhotos[selectedPhotoID]
-            : undefined
+          selectedPhotoID !== undefined ? photos[selectedPhotoID] : undefined
         }
         onModalClose={handleImageModalClose}
       />
