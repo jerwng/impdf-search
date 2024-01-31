@@ -16,6 +16,7 @@ import {
 
 import styled from "styled-components";
 import { useOcr } from "hooks/useOcr";
+import { uphoto_handleDelete } from "utils/photo";
 
 function App() {
   const { fileData, setFileData, clearFileData } = useOcr();
@@ -112,15 +113,13 @@ function App() {
    * Handler to delete the uploaded file.
    */
   const handleDeleteFileServer = () => {
-    if (typeof fileData.fileID !== "undefined") {
-      const searchBody = {
-        fileID: fileData.fileID,
-      };
-      uapi_delete(searchBody);
-    }
+    if (fileData.fileID === undefined) return;
+
+    uphoto_handleDelete({
+      fileID: fileData.fileID,
+    });
 
     clearFileData();
-
     clearPhotos();
   };
 
