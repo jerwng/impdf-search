@@ -5,8 +5,8 @@ import { Inputs } from "components/inputs/Inputs";
 import { Images } from "components/images/Images";
 import { ImageModal } from "components/images/ImageModal";
 import { Status } from "components/status/Status";
-import { StatusSpinner } from "components/status/StatusSpinner";
-import { StatusMessage } from "components/status/StatusMessage";
+
+import { useStatus } from "hooks/useStatus";
 
 import {
   uapi_post_pdf,
@@ -33,8 +33,15 @@ function App() {
   // displayedPhotos: photos filtered by the search bar.
   const [displayedPhotos, setDisplayedPhotos] = useState<string[]>([]);
   const [selectedPhotoID, setselectedPhotoID] = useState<number | undefined>();
-  const [spinnerShow, setSpinnerShow] = useState(false);
-  const [statusMessage, setStatusMessage] = useState<string | undefined>();
+
+  const {
+    isStatusLoading,
+    statusMessage,
+    setStatusMessage,
+    clearStatusMessage,
+    setIsStatusLoading,
+    clearIsStatusLoading,
+  } = useStatus();
 
   let pollingIntervalCount = 0;
   let pollingInterval: ReturnType<typeof setInterval>;
@@ -47,7 +54,7 @@ function App() {
     const file_form_data = new FormData();
     file_form_data.append("file", file);
 
-    setSpinnerShow(true);
+    setIsStatusLoading();
 
     /**
      * Delete previous uploaded file data from server
@@ -88,17 +95,19 @@ function App() {
         });
 
         setDisplayedPhotos(res.photos);
-        setSpinnerShow(false);
-        setStatusMessage(undefined);
+        clearIsStatusLoading();
+        clearStatusMessage();
       }
 
       pollingIntervalCount += 1;
 
-      // Stop polling if background job is not done in 5 mins.
+      // Stop polling if background job is not done in 5 mins (30000 seconds).
       if (pollingIntervalCount > 30) {
         clearInterval(pollingInterval);
-        setSpinnerShow(false);
-        setStatusMessage("Timeout");
+        clearIsStatusLoading();
+        setStatusMessage({
+          message: "Timed out. 5 minute time limit reached.",
+        });
         pollingIntervalCount = 0;
       }
     });
@@ -154,7 +163,7 @@ function App() {
         })
         .catch(async (err) => {
           const err_json = await err.json();
-          setStatusMessage(err_json.message);
+          setStatusMessage({ message: err_json.message });
         });
     }
   };
@@ -170,7 +179,7 @@ function App() {
         onFileSubmit={handleUpload}
         onSearchWords={handleSetSearchWords}
         onFileDelete={handleDeleteFileServer}
-        isFileLoading={spinnerShow}
+        isFileLoading={isStatusLoading}
         isSearchDisabled={fileData.allPhotos.length === 0}
       />
       <Images photos={displayedPhotos} onClick={handleClickThumbnail} />
@@ -182,15 +191,7 @@ function App() {
         }
         onModalClose={handleImageModalClose}
       />
-      <Status
-        status={
-          spinnerShow
-            ? StatusSpinner()
-            : statusMessage
-            ? StatusMessage({ message: statusMessage })
-            : undefined
-        }
-      />
+      <Status isLoading={isStatusLoading} message={statusMessage} />
     </AppContainer>
   );
 }
