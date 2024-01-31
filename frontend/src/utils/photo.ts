@@ -4,8 +4,17 @@ import { uapi_delete, uapi_post_search } from "./api";
 import { FileData, PhotoHandleFilterRes } from "./types";
 
 export const uphoto_handleDelete = ({ fileID }: { fileID: string }) => {
-  uapi_delete({
-    fileID,
+  return new Promise<void>((resolve, reject) => {
+    uapi_delete({
+      fileID,
+    })
+      .then(() => {
+        resolve();
+      })
+      .catch(async (err) => {
+        const err_json = await err.json();
+        reject({ message: err_json.message });
+      });
   });
 };
 
