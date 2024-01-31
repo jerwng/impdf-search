@@ -115,8 +115,8 @@ function App() {
       fileID: fileData.fileID,
     })
       .then(() => {
-    clearFileData();
-    clearPhotos();
+        clearFileData();
+        clearPhotos();
       })
       .catch((err: PromiseRejectErr) => {
         setStatusMessage({ message: err.message });
@@ -136,14 +136,18 @@ function App() {
   const handleSetSearchWords = (searchWord: string | undefined) => {
     if (!fileData.fileID) return;
 
+    setIsStatusLoading();
+
     uphoto_handleFilter({
       fileData,
       searchWord,
     })
       .then((res) => {
         setPhotos({ photos: res.photos });
+        clearIsStatusLoading();
       })
       .catch((err: PromiseRejectErr) => {
+        clearIsStatusLoading();
         setStatusMessage({ message: err.message });
       });
   };
