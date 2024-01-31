@@ -12,7 +12,7 @@ import { uapi_post_pdf, uapi_get_results, uapi_delete } from "utils/api";
 import styled from "styled-components";
 import { useOcr } from "hooks/useOcr";
 import { uphoto_handleDelete, uphoto_handleFilter } from "utils/photo";
-import { PhotoHandleFilterErr } from "utils/types";
+import { PromiseRejectErr } from "utils/types";
 
 function App() {
   const { fileData, setFileData, clearFileData } = useOcr();
@@ -113,10 +113,14 @@ function App() {
 
     uphoto_handleDelete({
       fileID: fileData.fileID,
-    });
-
+    })
+      .then(() => {
     clearFileData();
     clearPhotos();
+      })
+      .catch((err: PromiseRejectErr) => {
+        setStatusMessage({ message: err.message });
+      });
   };
 
   /**
@@ -139,7 +143,7 @@ function App() {
       .then((res) => {
         setPhotos({ photos: res.photos });
       })
-      .catch((err: PhotoHandleFilterErr) => {
+      .catch((err: PromiseRejectErr) => {
         setStatusMessage({ message: err.message });
       });
   };
