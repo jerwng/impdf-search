@@ -26,3 +26,17 @@ export type APIDeleteRes = {
   status: string;
   fileID: string;
 };
+
+export type PhotoHandleFilterRes = {
+  photos: string[];
+};
+
+export type PhotoHandleFilterErr = {
+  message: string;
+};
+
+export interface FileData {
+  allPhotos: string[];
+  ocr: Ocr;
+  fileID: string | undefined;
+}

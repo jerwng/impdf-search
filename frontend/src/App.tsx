@@ -7,16 +7,12 @@ import { Status } from "components/status/Status";
 import { useStatus } from "hooks/useStatus";
 import { usePhoto } from "hooks/usePhoto";
 
-import {
-  uapi_post_pdf,
-  uapi_post_search,
-  uapi_get_results,
-  uapi_delete,
-} from "utils/api";
+import { uapi_post_pdf, uapi_get_results, uapi_delete } from "utils/api";
 
 import styled from "styled-components";
 import { useOcr } from "hooks/useOcr";
-import { uphoto_handleDelete } from "utils/photo";
+import { uphoto_handleDelete, uphoto_handleFilter } from "utils/photo";
+import { PhotoHandleFilterErr } from "utils/types";
 
 function App() {
   const { fileData, setFileData, clearFileData } = useOcr();
@@ -133,29 +129,19 @@ function App() {
   /**
    * Handler to filter the list of photos to the ones containing the inputted search word.
    */
-  const handleSetSearchWords = (newSearchWord: string | undefined) => {
+  const handleSetSearchWords = (searchWord: string | undefined) => {
     if (!fileData.fileID) return;
 
-    const newSearchWordArr = newSearchWord ? newSearchWord.split(" ") : [];
-
-    if (newSearchWordArr.length === 0) {
-      setPhotos({ photos: fileData.allPhotos });
-    } else {
-      const searchBody = {
-        ocr: fileData.ocr,
-        searchWord: newSearchWordArr,
-        id: fileData.fileID,
-      };
-
-      uapi_post_search(searchBody)
-        .then((res) => {
-          setPhotos({ photos: res.photos });
-        })
-        .catch(async (err) => {
-          const err_json = await err.json();
-          setStatusMessage({ message: err_json.message });
-        });
-    }
+    uphoto_handleFilter({
+      fileData,
+      searchWord,
+    })
+      .then((res) => {
+        setPhotos({ photos: res.photos });
+      })
+      .catch((err: PhotoHandleFilterErr) => {
+        setStatusMessage({ message: err.message });
+      });
   };
 
   const handleImageModalClose = () => {
