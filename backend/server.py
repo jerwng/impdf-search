@@ -88,7 +88,7 @@ def pdf():
         logging.basicConfig(format='[%(levelname)s] %(asctime)s - %(message)s', level=logging.ERROR)
         logging.error(e)
         logging.error(traceback.print_exc())
-        return {}, 500
+        return jsonify({"message": "Server Error"}), 500
 
 '''
 POST /search/
@@ -122,7 +122,7 @@ def search():
         logging.basicConfig(format='[%(levelname)s] %(asctime)s - %(message)s', level=logging.ERROR)
         logging.error(e)
         logging.error(traceback.print_exc())
-        return {}, 500
+        return jsonify({"message": "Server Error"}), 500
 
 '''
 GET /results/<job_id>/
@@ -183,7 +183,7 @@ def delete():
         logging.basicConfig(format='[%(levelname)s] %(asctime)s - %(message)s', level=logging.ERROR)
         logging.error(e)
         logging.error(traceback.print_exc())
-        return {}, 500
+        return jsonify({"message": "Server Error"}), 500
 
 @app.route('/')
 def serve():
