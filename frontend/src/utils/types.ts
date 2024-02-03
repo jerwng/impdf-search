@@ -6,10 +6,6 @@ export type Ocr = {
   words: string[];
 };
 
-export type PromiseRejectErr = {
-  message: string;
-};
-
 export type APIGetResultsRes = {
   id: string;
   ocr: Ocr;
@@ -33,6 +29,12 @@ export type APIDeleteRes = {
 
 export type PhotoHandleFilterRes = {
   photos: string[];
+};
+
+export type PhotoHandleUploadRes = {
+  allPhotos: string[];
+  ocr: Ocr;
+  fileID: string;
 };
 
 export interface FileData {

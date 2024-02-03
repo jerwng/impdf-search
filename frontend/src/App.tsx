@@ -7,12 +7,13 @@ import { Status } from "components/status/Status";
 import { useStatus } from "hooks/useStatus";
 import { usePhoto } from "hooks/usePhoto";
 
-import { uapi_post_pdf, uapi_get_results, uapi_delete } from "utils/api";
-
 import styled from "styled-components";
 import { useOcr } from "hooks/useOcr";
-import { uphoto_handleDelete, uphoto_handleFilter } from "utils/photo";
-import { PromiseRejectErr } from "utils/types";
+import {
+  uphoto_handleDelete,
+  uphoto_handleFilter,
+  uphoto_handleUpload,
+} from "utils/photo";
 
 function App() {
   const { fileData, setFileData, clearFileData } = useOcr();
@@ -35,74 +36,27 @@ function App() {
     clearSelectedPhotoID,
   } = usePhoto();
 
-  let pollingIntervalCount = 0;
-  let pollingInterval: ReturnType<typeof setInterval>;
-
   /**
    * Handler for the Inputs sub-component.
    * Submit the file to server to start performing OCR.
    */
   const handleUpload = (file: File) => {
-    const file_form_data = new FormData();
-    file_form_data.append("file", file);
-
     setIsStatusLoading();
 
-    /**
-     * Delete previous uploaded file data from server
-     */
-    if (typeof fileData.fileID !== "undefined") {
-      const searchBody = {
-        fileID: fileData.fileID,
-      };
-
-      uapi_delete(searchBody);
-    }
-
-    uapi_post_pdf(file_form_data).then((res) => {
-      /*
-      Server responds with a jobID once the file is submitted for OCR in the background.
-      Call polling function every 10s to check if OCR is done.
-      */
-      pollingIntervalCount = 0;
-      pollingInterval = setInterval(() => pollingTimer(res.jobID), 10000);
-    });
-  };
-
-  /**
-   * Polling function to check if the OCR background job is completed.
-   */
-  const pollingTimer = (jobID: string) => {
-    uapi_get_results(jobID).then((res) => {
-      /**
-       * Render the processed photo and stop polling cuntion once OCR background job
-       * finishes and returns the values.
-       */
-      if (res.status === "Finished") {
-        clearInterval(pollingInterval);
-        setFileData({
-          allPhotos: res.photos,
-          ocr: res.ocr,
-          fileID: res.id,
-        });
-
-        setPhotos({ photos: res.photos });
+    uphoto_handleUpload({
+      fileID: fileData.fileID,
+      file,
+    })
+      .then((res) => {
+        setFileData(res);
+        setPhotos({ photos: res.allPhotos });
+      })
+      .catch((err) => {
+        setStatusMessage({ message: err.message });
+      })
+      .finally(() => {
         clearIsStatusLoading();
-        clearStatusMessage();
-      }
-
-      pollingIntervalCount += 1;
-
-      // Stop polling if background job is not done in 5 mins (30000 seconds).
-      if (pollingIntervalCount > 30) {
-        clearInterval(pollingInterval);
-        clearIsStatusLoading();
-        setStatusMessage({
-          message: "Timed out. 5 minute time limit reached.",
-        });
-        pollingIntervalCount = 0;
-      }
-    });
+      });
   };
 
   /**
@@ -118,7 +72,7 @@ function App() {
         clearFileData();
         clearPhotos();
       })
-      .catch((err: PromiseRejectErr) => {
+      .catch((err) => {
         setStatusMessage({ message: err.message });
       });
   };
@@ -146,7 +100,7 @@ function App() {
         setPhotos({ photos: res.photos });
         clearIsStatusLoading();
       })
-      .catch((err: PromiseRejectErr) => {
+      .catch((err) => {
         clearIsStatusLoading();
         setStatusMessage({ message: err.message });
       });
