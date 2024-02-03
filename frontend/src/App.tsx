@@ -42,6 +42,7 @@ function App() {
    */
   const handleUpload = (file: File) => {
     setIsStatusLoading();
+    clearStatusMessage();
 
     uphoto_handleUpload({
       fileID: fileData.fileID,
@@ -65,6 +66,9 @@ function App() {
   const handleDeleteFileServer = () => {
     if (fileData.fileID === undefined) return;
 
+    setIsStatusLoading();
+    clearStatusMessage();
+
     uphoto_handleDelete({
       fileID: fileData.fileID,
     })
@@ -74,6 +78,9 @@ function App() {
       })
       .catch((err) => {
         setStatusMessage({ message: err.message });
+      })
+      .finally(() => {
+        clearIsStatusLoading();
       });
   };
 
@@ -91,6 +98,7 @@ function App() {
     if (!fileData.fileID) return;
 
     setIsStatusLoading();
+    clearStatusMessage();
 
     uphoto_handleFilter({
       fileData,
@@ -98,11 +106,12 @@ function App() {
     })
       .then((res) => {
         setPhotos({ photos: res.photos });
-        clearIsStatusLoading();
       })
       .catch((err) => {
-        clearIsStatusLoading();
         setStatusMessage({ message: err.message });
+      })
+      .finally(() => {
+        clearIsStatusLoading();
       });
   };
 
