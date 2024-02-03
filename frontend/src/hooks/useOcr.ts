@@ -1,13 +1,9 @@
 import { useState } from "react";
 import { initOCR } from "utils/constants";
-import { Ocr } from "utils/types";
+import { FileData } from "utils/types";
 
 export const useOcr = () => {
-  const [fileData, setFileData] = useState<{
-    allPhotos: string[];
-    ocr: Ocr;
-    fileID: string | undefined;
-  }>({
+  const [fileData, setFileData] = useState<FileData>({
     // allPhoto: photo for each page of the PDF
     allPhotos: [],
     ocr: initOCR,
