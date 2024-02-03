@@ -22,22 +22,6 @@ app.config['UPLOAD_EXTENSIONS'] = ['.pdf']
 q = Queue(connection=conn)
 
 '''
-Home API
-Test landing
-'''
-@app.route('/', methods=['GET'])
-def home():
-    return '''<h1>Hello World 123</h1>'''
-
-'''
-Test API
-'''
-@app.route('/test/', methods=['GET'])
-@cross_origin()
-def test():
-    return "hello"
-
-'''
 POST /pdf/
 
 Receives the PDF file, starts a background job that 
@@ -184,7 +168,3 @@ def delete():
         logging.error(e)
         logging.error(traceback.print_exc())
         return jsonify({"message": "Server Error"}), 500
-
-@app.route('/')
-def serve():
-    return send_from_directory(app.static_folder, 'index.html')
